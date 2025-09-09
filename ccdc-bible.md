@@ -1054,7 +1054,7 @@ If you're lame and don't run Hayden's script follow these instructions
 
 - Update 
     ```php
-    ps_employee set passwd = md5(‘<cookie>more-secure-with-this’) where id_employee = 1;
+    ps_employee set passwd = md5('<cookie>more-secure-with-this') where id_employee = 1;
     ```
 
 ### Backup 2
