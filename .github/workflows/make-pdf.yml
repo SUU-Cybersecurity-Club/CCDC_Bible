@@ -28,7 +28,6 @@ jobs:
                 --toc \
                 -o ccdc-bible.pdf \
                 --pdf-engine=xelatex \
-                --pdf-engine-opts=-shell-escape \
                 --listings \
                 --lua-filter=h1-pagebreak.lua
             
