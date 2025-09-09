@@ -19,9 +19,7 @@ jobs:
             
             - name: Install Noto Fonts
               run : |
-                apt-get update
-                apt-get install -y --no-install-recommends \
-                    fontconfig fonts-noto-core fonts-noto-serif fonts-noto-sans fonts-noto-mono
+                apk add --no-cache fontconfig font-noto 
                 fc-cache -fv
             
             - name: Build PDF with Pandoc
