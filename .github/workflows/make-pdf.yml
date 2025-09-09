@@ -1,0 +1,42 @@
+name: Make PDF on Merge
+
+on:
+    pull_request:
+        types: [closed]
+        branches: [main]
+    workflow_dispatch:
+
+jobs:
+    build-pdf:
+        if: github.event.pull_request.merged == true
+        runs-on: ubuntu-latest
+
+        container:
+            image: pandoc/extra:latest
+        
+        steps:
+            - name: Check out repository
+              uses: actions/checkout@v4
+            
+            - name: Install Noto Fonts
+              run : |
+                apt-get update
+                apt-get install -y --no-install-recommends \
+                    fontconfig fonts-noto-core fonts-noto-serif fonts-noto-sans fonts-noto-mono
+                fc-cache -fv
+            
+            - name: Build PDF with Pandoc
+              run: |
+                pandoc ccdc-bible.md \
+                --toc \
+                -o ccdc-bible.pdf \
+                --pdf-engine=xelatex \
+                --pdf-engine-opts=-shell-escape \
+                --listings \
+                --lua-filter=h1-pagebreak.lua
+            
+            - name: Upload PDF artifact
+              uses: actions/upload-artifact@v4
+              with:
+                name: ccdc-bible
+                path: ccdc-bible.pdf
