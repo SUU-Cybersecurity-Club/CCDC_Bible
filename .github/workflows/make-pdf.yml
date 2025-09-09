@@ -31,13 +31,13 @@ jobs:
             
             - name: Install Noto Fonts
               run : |
-                apk add --no-cache fontconfig font-noto texmf-dist-latexextra
+                apk add --no-cache fontconfig font-noto 
                 fc-cache -fv
                 mktexlsr || true
             
             - name: Build PDF with Pandoc
               run: |
-                pandoc ccdc-bible.md \
+                TEXINPUTS=".:tex//:" pandoc ccdc-bible.md \
                 --toc \
                 -o ccdc-bible.pdf \
                 --pdf-engine=xelatex \
