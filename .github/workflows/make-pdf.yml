@@ -37,9 +37,11 @@ jobs:
             - name: Build PDF with Pandoc
               run: |
                 DATE="$(date -u '+%m-%d-%Y')"
-                echo "\renewcommand{\version}{${{ steps.tag.outcome.new_tag }}}"
-                echo "\renewcommand{\version}{$DATE}"
+                echo "\renewcommand{\version}{${{ steps.tag.outcome.new_tag }}}" > buildinfo.tex
+                echo "\renewcommand{\version}{$DATE}" >> buildinfo.tex
                 TEXINPUTS=".:tex//:" pandoc ccdc-bible.md \
+                --metadata-file=meta.yaml \
+                --include-in-header=buildinfo.tex
                 --toc \
                 -o ccdc-bible-${{ steps.tag.outputs.new_tag }}.pdf \
                 --pdf-engine=xelatex \
