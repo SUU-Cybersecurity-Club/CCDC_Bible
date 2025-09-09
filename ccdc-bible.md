@@ -1,3 +1,25 @@
+# Contributors
+
+## 2025
+
+### Turner Bushell - Team Leader
+
+### Ethan Hunt - Linux/Web
+
+### Hayden Robbins - Windows
+
+### Caleb Davis - Networking
+
+### Jarom Smith - Windows
+
+### Crystal Hammond - Injects
+
+### Mckay Fawcett - Injects
+
+### Spring Bitner - Injects
+
+### Lucas Bigler - Backup
+
 # First 30 Minutes
 
 ## **Windows**
