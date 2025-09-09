@@ -38,7 +38,7 @@ jobs:
               run : |
                 DATE="$(date -u '+%m-%d-%Y')"
                 echo "\renewcommand{\version}{${{ steps.tag.outcome.new_tag }}}" >> buildinfo.tex
-                echo "\renewcommand{\version}{$DATE}" >> buildinfo.tex           
+                echo "\renewcommand{\builddate}{$DATE}" >> buildinfo.tex           
 
             - name: Build PDF with Pandoc
               run: |
