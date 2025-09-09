@@ -37,16 +37,16 @@ jobs:
             - name: Setup Buildinfo
               run : |
                 DATE="$(date -u '+%m-%d-%Y')"
-                echo "\renewcommand{\version}{\texttt{\detokenize{${{ steps.tag.outputs.new_tag }}}}}" >> buildinfo.tex
-                echo "\renewcommand{\builddate}{$DATE}" >> buildinfo.tex
+                echo "\renewcommand{\version}{\texttt{\detokenize{${{ steps.tag.outputs.new_tag }}}}}" >> build/buildinfo.tex
+                echo "\renewcommand{\builddate}{$DATE}" >> build/buildinfo.tex
                 cat buildinfo.tex
 
             - name: Build PDF with Pandoc
               run: |
                 TEXINPUTS=".:tex//:" pandoc ccdc-bible.md \
-                --metadata-file=meta.yaml \
-                --include-in-header=preamble.tex \
-                --include-in-header=buildinfo.tex \
+                --metadata-file=build/meta.yaml \
+                --include-in-header=build/preamble.tex \
+                --include-in-header=build/buildinfo.tex \
                 --toc \
                 -o ccdc-bible-${{ steps.tag.outputs.new_tag }}.pdf \
                 --pdf-engine=xelatex \
