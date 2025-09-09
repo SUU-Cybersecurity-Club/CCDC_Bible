@@ -31,7 +31,7 @@ jobs:
             
             - name: Install Noto Fonts
               run : |
-                apk add --no-cache fontconfig font-noto 
+                apk add --no-cache fontconfig font-noto texlive-full
                 fc-cache -fv
             
             - name: Build PDF with Pandoc
