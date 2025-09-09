@@ -720,5 +720,175 @@ If you're lame and don't run Hayden's script follow these instructions
     Mysqldump -p mysql > my.sql
     ```
 ## Fedora 21 Webmail
+### Network
+- DNS: Should be `1.1.1.1`
+### User Admin
+- Change passwords
+    ```
+    passwd
+    passwd sysadmin
+    ```
+- Add backup user
+    ```
+    useradd <backup_username>
+    password <backup_password>
+    ```
+- Add backup user to wheel group
+    ```
+    usermod -aG wheel <backup_username>
+    ```
+### Script
+- Download Script
+    ```
+    curl -O https://raw.githubusercontent.com/archHavik/Useful-Scripts/refs/heads/main/linux-hardening/start.sh -O https://raw.githubusercontent.com/archHavik/Useful-Scripts/refs/heads/main/linux-hardening/linux_wazuh_agent.sh
+    ```
+- Run Script
+    ```
+    chmod +x start.sh linux_wazuh_agent.sh && ./start.sh
+    ```
+### Backup 1
+- Backup `/etc`
+    ```
+    cd /
+    tar -cf bcte etc/
+    ```
+- Backup mail, website, and db
+    ```
+    /var/mail
+    /var/ww/html
+    mysqldump -p roundcubemail > r.sql
+    (password just press enter)
+    Mysqldump -p mysql > my.sql
+    ```
+### Services
+- Nuke SSH
+    ```
+    yum remove openssh-server
+    systemctl stop sshd
+    systemctl disable sshd
+    ```
+- Disable other services
+    ```
+    systemctl stop cockpit
+    systemctl disable cockpit
+    systemctl stop httpd
+    systemctl disable httpd
+    ```
+- Remove packages
+    ```
+    yum remove cockpit
+    ```
+### Security
+- Remove apacheapache from wheel group
+    ```
+    vim /etc/group
+    
+    Wheel delete the apache apache text
+    ```
+- Remove user `system` disable `apache` login
+    ```
+    vim /etc/passwd
+    Delete system user at the bottom
+    Also update apache from /bin/bash to /sbin/nologin
+    ```
+- Move `/root/passlist.txt` and `user.sh` to safe place
+    ```
+    mv to new safe place
+    ```
+- Remove passlist from `/etc/dovecot`
+    ```
+    rm /etc/dovecoct/passlist.txt
+    ```
+### Firewall
+- Make sure fallwall service is up
+    ```
+    firewall-cmd --list-all-zones > fireb
+    systemctl start firewalld
+    ```
+- Set firewall rules
+    ```
+    firewall-cmd --set-target=DROP --permanent
+    firewall-cmd --remove-service=cockpit --permanent
+    firewall-cmd --remove-service=ssh --permanent
+    firewall-cmd --remove-service=dhcpv6-client --permanent
+    firewall-cmd --add-service=smtp --permanent
+    firewall-cmd --add-service=pop3 --permanent
+    firewall-cmd --reload
+    ```
+- Backup firewall
+    ```
+    firewall-cmd --list-all-zones > firebafter
+    ```
+### Backup 2
+- Backup `/etc`
+    ```
+    cd /
+    tar -cf etc2 etc/
+    ```
+- Backup mail, website, and db
+    ```
+    /var/mail
+    /var/ww/html
+    mysqldump -p roundcubemail > r.sql
+    (password just press enter)
+    Mysqldump -p mysql > my.sql
+    ```
+### Distro Upgrade
+**22**
+- Run
+    ```
+    systemctl enable postfix
+    yum install fedup
+    fedup --network 22
+    dnf system-upgrade reboot
+    check openssh-server and cockpit
+    ```
+    As per https://fedoramagazine.org/upgrade-fedora-21-fedora-22/
+
+**23**
+- Run
+    ```
+    dnf update
+    fedup --network 23
+    dnf system-upgrade reboot
+    ```
+- Make sure to check services and firewall
+
 ## 2019 AD/DNS/DHCP
+### Network
+- To get to network adapter settings: run -> ncpa.cpl
+- To see default nameserver run nslookup
+- If it’s an IPv6 address, just turn off IPv6
+
+### AD Users
+- Descriptions have scoring users
 ## Splunk
+### Network
+- DNS: Should be `8.8.8.8`
+### Services
+- Nuke SSH
+    ```
+    yum remove openssh
+    ```
+- Disable other services
+    ```
+    systemctl stop cockpit
+    systemctl disable cockpit
+    ```
+### Backup
+- Backup `/opt` and `/etc`
+### Firewall
+- Add ports to `firewalld`
+    ```
+    1514, 1515, 1516
+    5500, 443
+    9200 / 9300 / 9400
+    ```
+### Notes
+- Ui_access log
+    ```
+    /opt/splunk/var/log/splunk/splunkd_ui_access.log
+    ```
+- Backup `/opt` move to `/home`
+- Change passwords to splunk users in the web gui (localhost:8000)
+- Find cve allowing remote access splunk 9.1.1
