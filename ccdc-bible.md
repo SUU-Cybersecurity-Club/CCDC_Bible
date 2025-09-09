@@ -429,6 +429,7 @@ Remember to check `/var/www/html`
     ```
     mysql -u <username> -p -e "DROP DATABASE IF EXISTS <database_name>; CREATE DATABASE <database_name>;"
     mysql -u <username> -p <database_name> < <database_name>_backup.sql
+    ```
 
 - Restore Table Backup
 
