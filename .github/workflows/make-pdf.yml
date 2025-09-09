@@ -36,18 +36,15 @@ jobs:
             
             - name: Build PDF with Pandoc
               run: |
+                DATE="$(date -u '+%m-%d-%Y')"
                 TEXINPUTS=".:tex//:" pandoc ccdc-bible.md \
                 --toc \
                 -o ccdc-bible-${{ steps.tag.outputs.new_tag }}.pdf \
                 --pdf-engine=xelatex \
                 --listings \
-                --lua-filter=h1-pagebreak.lua
-            
-            - name: Upload PDF artifact
-              uses: actions/upload-artifact@v4
-              with:
-                name: ccdc-bible
-                path: ccdc-bible.pdf
+                --lua-filter=h1-pagebreak.lua \
+                -V version="${{ steps.tag.outcome.new_tag }}" \
+                -V builddate="$DATE"
             
             - name: Create Release
               uses: softprops/action-gh-release@v2

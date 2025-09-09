@@ -15,6 +15,15 @@ header-includes:
   - \usepackage{upquote}
   - \usepackage{graphicx}
   - \usepackage{titlepic}
+  - \usepackage{fancyhdr}
+  - \pagestyle{fancy}
+  - \fancyhf{}
+  - \fancyfoot[L]{\thepage}
+  - \fancyfoot[R]{\footnotesize \texttt{$version$ Last edited on $builddate$}}
+  - \fancypagestyle{plain}{\fancyhf{}\fancyfoot[L]{\thepage}\fancyfoot[R]{\footnotesize \texttt{$version$ Last edited on $builddate$}}}
+  - renewcommand{\headrulewidth}{0pt}
+  - \renewcommand{\footrulewidth}{0pt}
+  - \setlength{\footskip}{18pt}
   - \titlepic{\centering\includegraphics[width=\textwidth,height=0.4\textheight,keepaspectratio]{write-that-down.png}}
   - \lstset{
       inputencoding=utf8,
