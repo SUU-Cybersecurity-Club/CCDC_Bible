@@ -5,6 +5,8 @@
 \usepackage{graphicx}
 \usepackage{titlepic}
 \usepackage{fancyhdr}
+\usepackage{etoolbox}
+\usepackage{titlesec}
 
 \providecommand{\version}{}%
 \providecommand{\builddate}{\today}%
@@ -29,6 +31,12 @@
     \setlength{\footskip}{18pt}
 }
 \makeatother
+
+\preto\section{\clearpage}
+\titleformat{\section}[display]
+    {\filcenter\bfseies\Huge}{}{0pt}{\vspace*{\fill}}[\vspace*{\fill}\thispagestyle{empty}\clearpage]
+
+\titlespacing*{\section}{0pt}{0pt}{0pt}
 
 \lstset{
     inputencoding=utf8,

@@ -50,7 +50,7 @@ jobs:
                 -o ccdc-bible-${{ steps.tag.outputs.new_tag }}.pdf \
                 --pdf-engine=xelatex \
                 --listings \
-                --lua-filter=build/h1-pagebreak.lua \
+                --lua-filter=build/h2-pagebreak.lua \
             
             - name: Create Release
               uses: softprops/action-gh-release@v2
