@@ -1,44 +1,3 @@
----
-title: "CCDC Bible"
-author: "CCDC Team Blood, Sweat, and Tears"
-geometry:
-  - margin=1in
-classoption:
-  - titlepage
-mainfont: "Noto Serif"
-sansfont: "Noto Sans"
-monofont: "Noto Sans Mono"
-header-includes:
-  - \usepackage{xcolor}
-  - \usepackage{listings}
-  - \usepackage{listingsutf8}
-  - \usepackage{upquote}
-  - \usepackage{graphicx}
-  - \usepackage{titlepic}
-  - \titlepic{\centering\includegraphics[width=\textwidth,height=0.4\textheight,keepaspectratio]{write-that-down.png}}
-  - \lstset{
-      inputencoding=utf8,
-      breaklines=true,
-      breakatwhitespace=false,
-      columns=fullflexible,
-      keepspaces=true,
-      showstringspaces=false,
-      basicstyle=\ttfamily\small,
-      upquote=true,
-      breakautoindent=false,
-      breakindent=0pt,
-      postbreak=\mbox{},
-      literate=
-        {‘}{{\textquotesingle}}1
-        {’}{{\textquotesingle}}1
-        {“}{{\textquotedbl}}1
-        {”}{{\textquotedbl}}1
-        {–}{{-}}1
-        {—}{{-}}1
-        {…}{{\ldots}}1
-    }
----
-
 # First 30 Minutes
 
 ## Windows
@@ -1095,7 +1054,7 @@ If you're lame and don't run Hayden's script follow these instructions
 
 - Update 
     ```php
-    ps_employee set passwd = md5(‘<cookie>more-secure-with-this’) where id_employee = 1;
+    ps_employee set passwd = md5('<cookie>more-secure-with-this') where id_employee = 1;
     ```
 
 ### Backup 2
