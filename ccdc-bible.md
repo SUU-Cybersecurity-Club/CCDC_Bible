@@ -1282,7 +1282,7 @@ If you're lame and don't run Hayden's script follow these instructions
 
 - Descriptions have scoring users
 
-## Splunk
+## **Splunk**
 
 ### Network
 
