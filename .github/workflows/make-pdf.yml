@@ -37,8 +37,6 @@ jobs:
             - name: Setup Buildinfo
               run : |
                 DATE="$(date -u '+%m-%d-%Y')"
-                echo "\providecommand{\version}{}" > buildinfo.tex
-                echo "\providecommand{\builddate}{\today}" >> buildinfo.tex
                 echo "\renewcommand{\version}{${{ steps.tag.outcome.new_tag }}}" >> buildinfo.tex
                 echo "\renewcommand{\version}{$DATE}" >> buildinfo.tex           
 
@@ -46,6 +44,7 @@ jobs:
               run: |
                 TEXINPUTS=".:tex//:" pandoc ccdc-bible.md \
                 --metadata-file=meta.yaml \
+                --include-in-header=preamble.tex \
                 --include-in-header=buildinfo.tex \
                 --toc \
                 -o ccdc-bible-${{ steps.tag.outputs.new_tag }}.pdf \

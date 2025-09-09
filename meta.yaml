@@ -7,5 +7,3 @@ classoption:
 mainfont: "Noto Serif"
 sansfont: "Noto Sans"
 monofont: "Noto Sans Mono"
-header-includes:
-  - \input{preamble.tex}
