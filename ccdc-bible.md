@@ -570,7 +570,63 @@ If you're lame and don't run Hayden's script follow these instructions
     ufw enable
     ```
 ## Ubuntu Workstation
+### Networking
+- Point DNS to `8.8.8.8`
+### User Admin
+- Change passwords
+    ```
+    passwd
+    passwd sysadmin
+    ```
+- Add backup user
+    ```
+    useradd <backup_username>
+    password <backup_password>
+    ```
+- Add backup user to sudo group
+    ```
+    usermod -aG sudo <backup_username>
+    ```
+### Services
+- Nuke SSH
+    ```
+    apt remove openssh-server
+    ```
+- Stop and disable services
+    ```
+    systemctl stop avahi-daemon
+    systemctl disable avahi-daemon
+    systemctl stop cupsd
+    systemctl disable cupsd
+    systemctl stop redis-server
+    systemctl disable redis-server
+    ```
+### Banner
+- Uncomment lines and add message
+    ```
+    vim /etc/gdm3/greeter.d/conf-defaults
 
+    banner-message-enable=true
+    banner-message-text=’<message>’
+    ```
+- Restart machine to apply changes
+### Script
+- Download Script
+    ```
+    curl -O https://raw.githubusercontent.com/archHavik/Useful-Scripts/refs/heads/main/linux-hardening/start.sh -O https://raw.githubusercontent.com/archHavik/Useful-Scripts/refs/heads/main/linux-hardening/linux_wazuh_agent.sh
+    ```
+- Run Script
+    ```
+    chmod +x start.sh linux_wazuh_agent.sh && ./start.sh
+    ```
+### Firewall
+- Shouldn't have anything scored so deny incoming traffic
+    ```
+    apt install ufw
+    ufw status
+    ufw default deny incoming
+    ufw enable
+    ```
 ## CentOS 7 E-Comm
 ## Fedora 21 Webmail
 ## 2019 AD/DNS/DHCP
