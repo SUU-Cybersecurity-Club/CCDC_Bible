@@ -934,7 +934,22 @@ If you're lame and don't run Hayden's script follow these instructions
 - Interface mgmt disable ping telnet ssh http http ocsp
 - Block 3306 port for all machines
 - Block 4444 this is metasploits default
-
-## Windows 10
-## Security Onion
 ## HoneyPots
+### Installation
+- Use pip
+    ```
+    python -m pip install honeypots
+    ```
+### Examples
+- Start honeypot
+    ```
+    sudo python3 -m honeypots --setup http:80,https:443,ftp:21,smtp:25,pop3:110,imap:143,telnet:23,mysql:3306,postgresql:5432,redis:6379,mongodb:27017 --options capture_commands >> logs.txt
+    ```
+- Redirect log file
+    ```
+    sudo python3 -m honeypots --setup ssh:22,ftp:21,imap:143,mysql:3306,pop3:110,smtp:25 --options capture_commands >> log.txt
+    ```
+- Use a config file
+    ```
+    sudo python3 -m honeypots --options capture_commands --config config.json >> log.txt
+    ```
