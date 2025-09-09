@@ -628,6 +628,97 @@ If you're lame and don't run Hayden's script follow these instructions
     ufw enable
     ```
 ## CentOS 7 E-Comm
+### Network
+- DNS: Should be `8.8.8.8`
+### User Admin
+- Change passwords
+    ```
+    passwd
+    passwd sysadmin
+    ```
+- Add backup user
+    ```
+    useradd <backup_username>
+    password <backup_password>
+    ```
+- Add backup user to sudo group
+    ```
+    usermod -aG sudo <backup_username>
+    ```
+### Packages
+- Update repos
+    ```
+    sed -i -e '/^mirrorlist/d;/^#baseurl=/{s,^#,,;s,/mirror,/vault,;}' /etc/yum.repos.d/CentOS*.repo
+    ```
+### Services
+- Nuke SSH
+    ```
+    yum remove openssh-server
+    systemctl stop sshd
+    systemctl disable sshd
+    ```
+- Mess with services
+    ```
+    systemctl stop chronyd
+    crontab -e (remove currl)
+    systemctl restart cron
+    chmod -R 555 prestashop
+
+    rm /etc/httpd/conf.d/phpMyAdmin.conf
+    ```
+### Backup 1
+- Backup `/etc`
+    ```
+    cd /
+    tar -cf bcte etc/
+    ```
+- Backup webserver stuff
+    ```
+    cd /var/
+    tar -cf wwww www/
+    (While here move admin site)
+    mysqldump -p prestashop > p.sql
+    (password just press enter)
+    Mysqldump -p mysql > my.sql
+    ```
+### Script
+- Download Script
+    ```
+    curl -O https://raw.githubusercontent.com/archHavik/Useful-Scripts/refs/heads/main/linux-hardening/start.sh -O https://raw.githubusercontent.com/archHavik/Useful-Scripts/refs/heads/main/linux-hardening/linux_wazuh_agent.sh
+    ```
+- Run Script
+    ```
+    chmod +x start.sh linux_wazuh_agent.sh && ./start.sh
+    ```
+### Firewall
+- Set firewall rules
+    ```
+    firewall-cmd --list-all-zones > fireb
+
+    firewall-cmd --set-target=DROP
+    firewall-cmd --add-service=http --permanent
+    firewall-cmd --remove-service=ssh --permanent
+    firewall-cmd --reload
+    ```
+### Database
+- Update admin password
+- cp settings change `settings.inc.php` file
+- mv to sql file
+- Update `ps_employee set passwd = md5(‘<cookie>more-secure-with-this’) where id_employee = 1;`
+### Backup 2
+- Backup `/etc`
+    ```
+    cd /
+    tar -cf ettc etc/
+    ```
+- Backup webserver stuff
+    ```
+    cd /var/
+    tar -cf wwww www/
+    mysqldump -p prestashop > p.sql
+    (password just press enter)
+    Mysqldump -p mysql > my.sql
+    ```
 ## Fedora 21 Webmail
 ## 2019 AD/DNS/DHCP
 ## Splunk
