@@ -473,9 +473,104 @@ If you're lame and don't run Hayden's script follow these instructions
     ufw allow 953/tcp
     ufw enable
     ```
-
+### Security
+- Download LinPeas
+    ```
+    wget https://github.com/peass-ng/PEASS-ng/releases/latest/download/linpeas.sh
+    ```
+- Run Script
+    ```
+    chmod +x linpeas.sh
+    ./linpeas.sh | less -RN
+    ```
 ## Ubuntu 18 Server
+### Network
+- DNS: Should be `8.8.8.8`
+### User Admin
+- Change passwords
+    ```
+    passwd
+    passwd sysadmin
+    ```
+- Add backup user
+    ```
+    useradd <backup_username>
+    password <backup_password>
+    ```
+- Add backup user to sudo group
+    ```
+    usermod -aG sudo <backup_username>
+    ```
+### Services
+- Nuke SSH
+    ```
+    systemctl stop sshd
+    apt remove openssh-server
+    ```
+- Disable vulnerable services
+    ```
+    systemctl stop apache2
+    systemctl disable apache2
+    ```
+### Database
+- Backup and stop database
+    ```
+    mkdir /usr/lib64/b/
+
+    cd <backup directory>
+
+    mysqldump -p openshop_db > opensho.sql
+    (password just press enter)
+    mysqldump -p db > data.sql
+    mysqldump -p mysql > my.sql
+
+    systemctl stop mariadb
+    ```
+### Script
+- Download Script
+    ```
+    curl -O https://raw.githubusercontent.com/archHavik/Useful-Scripts/refs/heads/main/linux-hardening/start.sh -O https://raw.githubusercontent.com/archHavik/Useful-Scripts/refs/heads/main/linux-hardening/linux_wazuh_agent.sh
+    ```
+- Run Script
+    ```
+    chmod +x start.sh linux_wazuh_agent.sh && ./start.sh
+    ```
+### Banner
+- Edit ssh config 
+    ```
+    vim /etc/ssh/sshd_config
+
+    banner /etc/issuse.net
+    ```
+- Edit or create `/etc/issuse.net`
+    ```
+    vim /etc/issuse.net
+    cp /etc/issuse.net /etc/issue
+    ```
+### Backup
+- Backup `/etc`
+    ```
+    cd /
+    tar -cf ettc etc/
+    mkdir
+    cp /ettc <dest>
+    ```
+- Backup `/var/www`
+    ```
+    cd /var/www
+    tar -cf web html/
+    mv web /etc/<dir>
+    ```
+### Firewall
+- Shouldn't have anything scored so deny incoming traffic
+    ```
+    apt install ufw
+    ufw status
+    ufw default deny incoming
+    ufw enable
+    ```
 ## Ubuntu Workstation
+
 ## CentOS 7 E-Comm
 ## Fedora 21 Webmail
 ## 2019 AD/DNS/DHCP
