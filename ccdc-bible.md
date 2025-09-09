@@ -13,6 +13,9 @@ header-includes:
   - \usepackage{listings}
   - \usepackage{listingsutf8}
   - \usepackage{upquote}
+  - \usepackage{graphicx}
+  - \usepackage{titlepic}
+  - \titlepic{\centering\includegraphics[width=\textwidth,height=0.4\textheight,keepaspectratio]{write-that-down.png}}
   - \lstset{
       inputencoding=utf8,
       breaklines=true,
@@ -795,7 +798,7 @@ If you're lame and don't run Hayden's script follow these instructions
 
 - Add backup user to sudo group
 
-    ```b
+    ```
     usermod -aG sudo <backup_username>
     ```
 
