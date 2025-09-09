@@ -193,7 +193,15 @@ Remember to check `/var/www/html`
 - Backup Firewall
 - Note Service Versions
 - TAKE A Screenshot
-
+## Palo Alto
+### 1. Create new users and delete old admins
+### 2. Check admin roles and delete unnecessary ones
+### 3. Check Global protect settings under network
+### 4. Perform updates
+- Download 11.1.0 (software page) and new content version (dynamic page) refresh to show
+- Download 11.1.4-h7 (or current preferred version) and current antivirus (dynamic page)
+- This should take about 20 min with a 4 min lapse in connection for each install
+### 5. Start making rules
 # General Stuff
 ## PEMDAS
 ### **P**atch **E**verything, **M**onitor **D**ata, **A**uthenticate **S**ecurely
@@ -892,3 +900,41 @@ If you're lame and don't run Hayden's script follow these instructions
 - Backup `/opt` move to `/home`
 - Change passwords to splunk users in the web gui (localhost:8000)
 - Find cve allowing remote access splunk 9.1.1
+# Services
+## Passlist
+- CSV update user passwords on windows and linux script
+## FTPS
+- https://www.youtube.com/watch?v=ISVyGxYfAGg
+- https://github.com/rhrn/docker-vsftpd/tree/master
+## WAF
+- Website application firewall
+- https://owasp.org/www-project-coraza-web-application-firewall/#
+- https://hub.docker.com/_/caddy
+- https://github.com/jptosso/coraza-waf-docker/blob/master/Caddyfile
+- https://medium.com/@jptosso/implementing-coraza-waf-with-docker-a55a995f055e
+## LibreNMS
+- https://docs.librenms.org/Installation/Docker/
+- https://nagios-plugins.org/doc/man/check_http.html
+### Useful info
+- Needs to ping
+- In docker container `librenms`
+    ```
+    lnms user:add --role=admin <username>
+    ```
+# Networks
+## Palo Alto
+### Wazuh
+- Ports needed
+    ```
+    1514, 1515, 1516
+    5500, 443
+    9200 / 9300 / 9400
+    ```
+### Rules
+- Interface mgmt disable ping telnet ssh http http ocsp
+- Block 3306 port for all machines
+- Block 4444 this is metasploits default
+
+## Windows 10
+## Security Onion
+## HoneyPots
