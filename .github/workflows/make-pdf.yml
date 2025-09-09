@@ -19,6 +19,15 @@ jobs:
         steps:
             - name: Check out repository
               uses: actions/checkout@v4
+
+            - name: Compute new version
+              id: tag
+              uses: mathieudtour/github-tag-action@v6.2
+              with:
+                github_token: ${{ secrets.GITHUB_TOKEN }}
+                release_branches: main
+                default_bump: patch
+                tag_prefix: v
             
             - name: Install Noto Fonts
               run : |
@@ -43,9 +52,9 @@ jobs:
             - name: Create Release
               uses: softprops/action-gh-release@v2
               with:
-                tag_name: docs-${{ github.run_id }}
-                name: "Build ${{ github.run_number }} (PR #${{ github.event.pull_request.number }})"
-                body: "Automated build after merging PR #${{ github.event.pull_request.number }}."
+                tag_name: ${{ steps.tag.outputs.new_tag }}
+                name: "Release ${{ steps.tag.outputs.new_tag }}"
+                body: "Automated build"
                 draft: false
                 prerelease: flase
                 make_latest: true
