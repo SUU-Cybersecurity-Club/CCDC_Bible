@@ -1,6 +1,6 @@
 # First 30 Minutes
 
-## Windows
+## **Windows**
 
 ### 1. Run Hayden's Script
 
@@ -27,7 +27,7 @@
 
 ### 3. Disable or change passwords to all unneeded users
         
-## Linux
+## **Linux**
 
 ### 1. Password Change, Check Sudoers
 
@@ -275,7 +275,7 @@ Remember to check `/var/www/html`
 
 - TAKE A Screenshot
 
-## Palo Alto
+## **Palo Alto**
 
 ### 1. Create new users and delete old admins
 
@@ -295,7 +295,7 @@ Remember to check `/var/www/html`
 
 # General Stuff
 
-## PEMDAS
+## **PEMDAS**
 
 ### **P**atch **E**verything, **M**onitor **D**ata, **A**uthenticate **S**ecurely
 
@@ -311,7 +311,7 @@ Remember to check `/var/www/html`
 
 6. Profit
 
-## Linux
+## **Linux**
 
 ### Account/Group
 
@@ -467,7 +467,7 @@ Remember to check `/var/www/html`
     ./linpeas.sh | less -RN
     ```
 
-## Windows
+## **Windows**
 
 ### 2016 Docker/Remote
 
@@ -546,7 +546,7 @@ If you're lame and don't run Hayden's script follow these instructions
 
 # Operating Systems
 
-## Debian 9
+## **Debian 9**
 
 - Update DNS in `/etc/resolv.conf` to `8.8.8.8`
 
@@ -558,7 +558,7 @@ If you're lame and don't run Hayden's script follow these instructions
     sed -i '/stretch-updates/d' /etc/apt/sources.list
     ```
 
-## Debian 10
+## **Debian 10**
 
 ### Network
 
@@ -733,7 +733,7 @@ If you're lame and don't run Hayden's script follow these instructions
     ./linpeas.sh | less -RN
     ```
 
-## Ubuntu 18 Server
+## **Ubuntu 18 Server**
 
 ### Network
 
@@ -855,7 +855,7 @@ If you're lame and don't run Hayden's script follow these instructions
     ufw enable
     ```
 
-## Ubuntu Workstation
+## **Ubuntu Workstation**
 
 ### Networking
 
@@ -940,7 +940,7 @@ If you're lame and don't run Hayden's script follow these instructions
     ufw enable
     ```
 
-## CentOS 7 E-Comm
+## **CentOS 7 E-Comm**
 
 ### Network
 
@@ -1076,7 +1076,7 @@ If you're lame and don't run Hayden's script follow these instructions
     Mysqldump -p mysql > my.sql
     ```
 
-## Fedora 21 Webmail
+## **Fedora 21 Webmail**
 
 ### Network
 
@@ -1267,7 +1267,7 @@ If you're lame and don't run Hayden's script follow these instructions
 - Make sure to check services and firewall
 
 
-## 2019 AD/DNS/DHCP
+## **2019 AD/DNS/DHCP**
 
 ### Network
 
@@ -1333,17 +1333,17 @@ If you're lame and don't run Hayden's script follow these instructions
 
 # Services
 
-## Passlist
+## **Passlist**
 
 - CSV update user passwords on windows and linux script
 
-## FTPS
+## **FTPS**
 
 - https://www.youtube.com/watch?v=ISVyGxYfAGg
 
 - https://github.com/rhrn/docker-vsftpd/tree/master
 
-## WAF
+## **WAF**
 
 - Website application firewall
 
@@ -1355,7 +1355,7 @@ If you're lame and don't run Hayden's script follow these instructions
 
 - https://medium.com/@jptosso/implementing-coraza-waf-with-docker-a55a995f055e
 
-## LibreNMS
+## **LibreNMS**
 
 - https://docs.librenms.org/Installation/Docker/
 
@@ -1373,7 +1373,7 @@ If you're lame and don't run Hayden's script follow these instructions
 
 # Networks
 
-## Palo Alto
+## **Palo Alto**
 
 ### Wazuh
 
@@ -1393,7 +1393,7 @@ If you're lame and don't run Hayden's script follow these instructions
 
 - Block 4444 this is metasploits default
 
-## HoneyPots
+## **HoneyPots**
 
 ### Installation
 

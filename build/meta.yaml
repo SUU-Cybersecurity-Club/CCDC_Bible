@@ -7,3 +7,5 @@ classoption:
 mainfont: "Noto Serif"
 sansfont: "Noto Sans"
 monofont: "Noto Sans Mono"
+documentclass: extarticle
+fontsize: 12pt
