@@ -44,7 +44,6 @@ jobs:
       - name: Get version
         shell: bash
         run: |
-          set -euo pipefall
           apk add --no-cache curl jq
           tag="$(curl -fsSL -H "Authorization: Beaerer ${{ github.token }}" \
             -H "X-GitHub-Api-Version: 2022-11-28" \
@@ -72,8 +71,6 @@ jobs:
           NAME:      ${{ matrix.name }}
           KEEP:      ${{ matrix.keep }}
         run: |
-          set -euo pipefail
-
           FILTER='--lua-filter=build/extract-sections.lua'
 
           echo "Preset: ${NAME}"
