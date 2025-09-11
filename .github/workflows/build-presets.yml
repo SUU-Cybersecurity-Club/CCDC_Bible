@@ -3,14 +3,9 @@ name: Build PDFs (presets)
 on:
   workflow_dispatch:
     inputs:
-      build_all:
-        description: "Build all presets (if false, build only 'preset')"
-        type: boolean
-        required: true
-        default: true
       preset:
-        description: "Preset name to build when build_all=false"
-        required: false
+        description: "Preset name to build"
+        required: true 
         default: ""
 
 jobs:
@@ -64,9 +59,7 @@ jobs:
           echo "\renewcommand{\version}{\texttt{\detokenize{$TAG}}}" >> build/buildinfo.tex
           echo "\renewcommand{\builddate}{$DATE}" >> build/buildinfo.tex
 
-      # Skip presets if build_all=false and this isn't the chosen one
       - name: Build preset
-        if: ${{ inputs.build_all || matrix.name == inputs.preset }}
         env:
           NAME:      ${{ matrix.name }}
           KEEP:      ${{ matrix.keep }}
