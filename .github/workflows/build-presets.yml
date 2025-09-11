@@ -76,7 +76,7 @@ jobs:
           echo "Preset: ${NAME}"
           echo "Keep  : ${KEEP}"
 
-          TEXINPUTS=".:tex//:"pandoc ccdc-bible.md \
+          TEXINPUTS=".:tex//:" pandoc ccdc-bible.md \
             --metadata-file=build/meta.yaml \
             --include-in-header=build/preamble.tex \
             --include-in-header=build/buildinfo.tex \
