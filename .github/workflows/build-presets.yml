@@ -26,11 +26,11 @@ jobs:
         include:
           # ↓ Define your presets here
           - name: first30
-            keep: '[".first30"]'
+            keep: '.first30'
           - name: general-linux
-            keep: '[".general#linux"]'
+            keep: '.general#linux'
           - name: general-windows
-            keep: '[".general#windows"]'
+            keep: '.general#windows'
           - name: os-info
             keep: '[".os"]'
           
