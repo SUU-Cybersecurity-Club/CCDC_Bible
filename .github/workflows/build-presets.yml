@@ -44,7 +44,7 @@ jobs:
           release_branches: main
           dry_run: true
       - run:
-          TAG=${{ steps.tagger.outputs.previous_tag }}
+          TAG=${{ steps.tag.outputs.previous_tag }}
 
       - name: Install fonts
         run: |
@@ -54,7 +54,7 @@ jobs:
       - name: Setup Buildinfo
         run : |
           DATE="$(date -u '+%m-%d-%Y')"
-          echo "\renewcommand{\version}{\texttt{\detokenize{$${{ steps.tagger.outputs.previous_tag }}}}}" >> build/buildinfo.tex
+          echo "\renewcommand{\version}{\texttt{\detokenize{$${{ steps.tag.outputs.previous_tag }}}}}" >> build/buildinfo.tex
           echo "\renewcommand{\builddate}{$DATE}" >> build/buildinfo.tex
 
       # Skip presets if build_all=false and this isn't the chosen one
@@ -65,7 +65,6 @@ jobs:
           KEEP:      ${{ matrix.keep }}
         run: |
           set -euo pipefail
-          mkdir -p "$OUTDIR"
 
           FILTER='--lua-filter=filters/extract-sections.lua'
 
@@ -77,7 +76,7 @@ jobs:
             --include-in-header=build/preamble.tex \
             --include-in-header=build/buildinfo.tex \
             --toc \
-            -o "./${NAME}-${{ steps.tagger.outputs.previous_tag }}.pdf" \
+            -o "./${NAME}-${{ steps.tag.outputs.previous_tag }}.pdf" \
             --pdf-engine="xelatex" \
             $FILTER -M keep="${KEEP}" \
             --lua-filter=build/h2-pagebreak.lua
