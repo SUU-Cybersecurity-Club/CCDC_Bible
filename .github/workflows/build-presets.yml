@@ -39,7 +39,6 @@ jobs:
 
       - name: Install Bash
         run: |
-          set -euo pipefall
           apk add --no-cache bash
 
       - name: Get version
