@@ -28,7 +28,7 @@ jobs:
           - name: general-windows
             keep: '.general#windows'
           - name: os-info
-            keep: '[".os"]'
+            keep: '.os'
           
     steps:
       - uses: actions/checkout@v4
