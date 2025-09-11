@@ -10,6 +10,7 @@ on:
 
 jobs:
   build-pdf:
+    if: ${{ inputs.preset == '' }}
     runs-on: ubuntu-latest
 
     container: 
@@ -63,7 +64,10 @@ jobs:
         env:
           NAME:      ${{ matrix.name }}
           KEEP:      ${{ matrix.keep }}
+          OUTDIR: temp
         run: |
+          mkdir -p "$OUTDIR"
+
           FILTER='--lua-filter=build/extract-sections.lua'
 
           echo "Preset: ${NAME}"
@@ -74,7 +78,7 @@ jobs:
             --include-in-header=build/preamble.tex \
             --include-in-header=build/buildinfo.tex \
             --toc \
-            -o "./${NAME}-$TAG.pdf" \
+            -o "$OUTDIR/${NAME}-$TAG.pdf" \
             --pdf-engine="xelatex" \
             $FILTER -M keep="${KEEP}" \
             --lua-filter=build/h2-pagebreak.lua
@@ -82,5 +86,5 @@ jobs:
       - name: Upload PDFs
         uses: actions/upload-artifact@v4
         with:
-          name: pdfs
-          path: ./*.pdf
+          name: pdf-"${NAME}"
+          path: "$OUTDIR/${NAME}.pdf"
