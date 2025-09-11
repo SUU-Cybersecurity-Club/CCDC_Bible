@@ -37,6 +37,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Install Bash
+        run: |
+          set -euo pipefall
+          apk add --no-cache bash
+
       - name: Get version
         shell: bash
         run: |
