@@ -1,0 +1,53 @@
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{listingsutf8}
+\usepackage{upquote}
+\usepackage{graphicx}
+\usepackage{titlepic}
+\usepackage{fancyhdr}
+
+\providecommand{\version}{}%
+\providecommand{\builddate}{\today}%
+
+\titlepic{\centering
+    \includegraphics[width=\textwidth,height=0.4\textheight,keepaspectratio]{write-that-down.png}
+}
+
+\makeatletter
+\AtBeginDocument{%
+    \pagestyle{fancy}
+    \fancyhf{}
+    \fancyfoot[C]{\thepage}
+    \fancyfoot[R]{\footnotesize\ttfamily \version\ \textbar\ Last edited on \builddate}%
+    \fancypagestyle{plain}{%
+        \fancyhf{}%
+        \fancyfoot[C]{\thepage}%
+        \fancyfoot[R]{\footnotesize\ttfamily \version\ \textbar\ Last edited on \builddate}%
+    }%
+    \renewcommand{\headrulewidth}{0pt}
+    \renewcommand{\footrulewidth}{0pt}
+    \setlength{\footskip}{18pt}
+}
+\makeatother
+
+\lstset{
+    inputencoding=utf8,
+    breaklines=true,
+    breakatwhitespace=false,
+    columns=fullflexible,
+    keepspaces=true,
+    showstringspaces=false,
+    basicstyle=\ttfamily\small,
+    upquote=true,
+    breakautoindent=false,
+    breakindent=0pt,
+    postbreak=\mbox{},
+    literate=
+    {‘}{{\textquotesingle}}1
+    {’}{{\textquotesingle}}1
+    {“}{{\textquotedbl}}1
+    {”}{{\textquotedbl}}1
+    {–}{{-}}1
+    {—}{{-}}1
+    {…}{{\ldots}}1
+}

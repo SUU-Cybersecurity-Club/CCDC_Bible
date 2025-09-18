@@ -24,6 +24,10 @@
 
 ## **Windows** {.first30 #windows}
 
+# First 30 Minutes
+
+## Windows
+
 ### 1. Run Hayden's Script
 
 - Quick Install:
