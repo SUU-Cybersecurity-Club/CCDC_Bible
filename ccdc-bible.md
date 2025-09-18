@@ -997,6 +997,10 @@ If you're lame and don't run Hayden's script follow these instructions
     ```
     sed -i -e '/^mirrorlist/d;/^#baseurl=/{s,^#,,;s,/mirror,/vault,;}' /etc/yum.repos.d/CentOS*.repo
     ```
+    If that doesn't work, then run this
+    ```
+    sed -i -e '/^mirrorlist/d;/^baseurl=/{s,^#,,;s,/mirror,/vault,;}' /etc/yum.repos.d/CentOS*.repo
+    ```
 
 ### Services
 
