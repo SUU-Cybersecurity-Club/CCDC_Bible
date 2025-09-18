@@ -20,10 +20,6 @@
 
 ### Lucas Bigler - Backup
 
-# First 30 Minutes {.first30}
-
-## **Windows** {.first30 #windows}
-
 # First 30 Minutes
 
 ## Windows
