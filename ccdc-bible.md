@@ -1,3 +1,29 @@
+# Contributors {.contrib}
+
+## 2025 {.contrib #2025}
+
+### Turner Bushell - Team Leader
+
+### Ethan Hunt - Linux/Web
+
+### Hayden Robbins - Windows
+
+### Caleb Davis - Networking
+
+### Jarom Smith - Windows
+
+### Crystal Hammond - Injects
+
+### Mckay Fawcett - Injects
+
+### Spring Bitner - Injects
+
+### Lucas Bigler - Backup
+
+# First 30 Minutes {.first30}
+
+## **Windows** {.first30 #windows}
+
 # First 30 Minutes
 
 ## Windows
@@ -27,7 +53,7 @@
 
 ### 3. Disable or change passwords to all unneeded users
         
-## Linux
+## **Linux** {.first30 #linux}
 
 ### 1. Password Change, Check Sudoers
 
@@ -275,7 +301,7 @@ Remember to check `/var/www/html`
 
 - TAKE A Screenshot
 
-## Palo Alto
+## **Palo Alto** {.first30 #palo}
 
 ### 1. Create new users and delete old admins
 
@@ -293,9 +319,9 @@ Remember to check `/var/www/html`
 
 ### 5. Start making rules
 
-# General Stuff
+# General Stuff {.general}
 
-## PEMDAS
+## **PEMDAS** {.general #pemdas}
 
 ### **P**atch **E**verything, **M**onitor **D**ata, **A**uthenticate **S**ecurely
 
@@ -311,7 +337,7 @@ Remember to check `/var/www/html`
 
 6. Profit
 
-## Linux
+## **Linux** {.general #linux}
 
 ### Account/Group
 
@@ -467,7 +493,7 @@ Remember to check `/var/www/html`
     ./linpeas.sh | less -RN
     ```
 
-## Windows
+## **Windows** {.general #windows}
 
 ### 2016 Docker/Remote
 
@@ -544,9 +570,9 @@ If you're lame and don't run Hayden's script follow these instructions
     .\start.bat;
     ```
 
-# Operating Systems
+# Operating Systems {.os}
 
-## Debian 9
+## **Debian 9** {.os #debian9}
 
 - Update DNS in `/etc/resolv.conf` to `8.8.8.8`
 
@@ -558,7 +584,7 @@ If you're lame and don't run Hayden's script follow these instructions
     sed -i '/stretch-updates/d' /etc/apt/sources.list
     ```
 
-## Debian 10
+## **Debian 10** {.os #debian10}
 
 ### Network
 
@@ -733,7 +759,7 @@ If you're lame and don't run Hayden's script follow these instructions
     ./linpeas.sh | less -RN
     ```
 
-## Ubuntu 18 Server
+## **Ubuntu 18 Server** {.os #ubuntu-srv}
 
 ### Network
 
@@ -855,7 +881,7 @@ If you're lame and don't run Hayden's script follow these instructions
     ufw enable
     ```
 
-## Ubuntu Workstation
+## **Ubuntu Workstation** {.os #ubuntu-wrk}
 
 ### Networking
 
@@ -940,7 +966,7 @@ If you're lame and don't run Hayden's script follow these instructions
     ufw enable
     ```
 
-## CentOS 7 E-Comm
+## **CentOS 7 E-Comm** {.os #centos}
 
 ### Network
 
@@ -974,6 +1000,10 @@ If you're lame and don't run Hayden's script follow these instructions
 
     ```
     sed -i -e '/^mirrorlist/d;/^#baseurl=/{s,^#,,;s,/mirror,/vault,;}' /etc/yum.repos.d/CentOS*.repo
+    ```
+    If that doesn't work, then run this
+    ```
+    sed -i -e '/^mirrorlist/d;/^baseurl=/{s,^#,,;s,/mirror,/vault,;}' /etc/yum.repos.d/CentOS*.repo
     ```
 
 ### Services
@@ -1076,7 +1106,7 @@ If you're lame and don't run Hayden's script follow these instructions
     Mysqldump -p mysql > my.sql
     ```
 
-## Fedora 21 Webmail
+## **Fedora 21 Webmail** {.os #fedora}
 
 ### Network
 
@@ -1267,7 +1297,7 @@ If you're lame and don't run Hayden's script follow these instructions
 - Make sure to check services and firewall
 
 
-## 2019 AD/DNS/DHCP
+## **2019 AD/DNS/DHCP** {.os #ad-dns-dhcp}
 
 ### Network
 
@@ -1282,7 +1312,7 @@ If you're lame and don't run Hayden's script follow these instructions
 
 - Descriptions have scoring users
 
-## Splunk
+## **Splunk** {.os #splunk}
 
 ### Network
 
@@ -1331,19 +1361,19 @@ If you're lame and don't run Hayden's script follow these instructions
 
 - Find cve allowing remote access splunk 9.1.1
 
-# Services
+# Services {.services}
 
-## Passlist
+## **Passlist** {.services #passlist}
 
 - CSV update user passwords on windows and linux script
 
-## FTPS
+## **FTPS** {.services #ftps}
 
 - https://www.youtube.com/watch?v=ISVyGxYfAGg
 
 - https://github.com/rhrn/docker-vsftpd/tree/master
 
-## WAF
+## **WAF** {.services #waf}
 
 - Website application firewall
 
@@ -1355,7 +1385,7 @@ If you're lame and don't run Hayden's script follow these instructions
 
 - https://medium.com/@jptosso/implementing-coraza-waf-with-docker-a55a995f055e
 
-## LibreNMS
+## **LibreNMS** {.services #librenms}
 
 - https://docs.librenms.org/Installation/Docker/
 
@@ -1371,9 +1401,9 @@ If you're lame and don't run Hayden's script follow these instructions
     lnms user:add --role=admin <username>
     ```
 
-# Networks
+# Networks {.networks}
 
-## Palo Alto
+## **Palo Alto** {.networks #palo}
 
 ### Wazuh
 
@@ -1393,7 +1423,7 @@ If you're lame and don't run Hayden's script follow these instructions
 
 - Block 4444 this is metasploits default
 
-## HoneyPots
+## **HoneyPots** {.networks #honeypots}
 
 ### Installation
 
