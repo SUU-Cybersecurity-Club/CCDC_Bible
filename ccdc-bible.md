@@ -30,14 +30,14 @@
    
     ```
     [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12;
-    Invoke-WebRequest https://github.com/archHavik/Useful-Scripts/archive/refs/heads/main.zip -Outfile Useful-Scripts.zip;
-    Expand-Archive -Path Useful-Scripts.zip -DestinationPath Useful-Scripts;
+    Invoke-WebRequest https://github.com/SUU-Cybersecurity-Club/CCDC-Scripts/releases/latest/windows-hardening.zip -Outfile windows-hardening.zip;
+    Expand-Archive -Path windows-hardening.zip -DestinationPath windows-hardening;
     ```
 
 - Run
     
     ```
-    cd useful-scripts\windows-hardening;
+    cd windows-hardening;
     .\start.bat;
     ```
 
@@ -254,7 +254,14 @@ Remember to check `/var/www/html`
 - Download scripts
     
     ```
-    curl -O https://raw.githubusercontent.com/archHavik/Useful-Scripts/refs/heads/main/linux-hardening/start.sh -O https://raw.githubusercontent.com/archHavik/Useful-Scripts/refs/heads/main/linux-hardening/linux_wazuh_agent.sh
+    curl -O https://github.com/SUU-Cybersecurity-Club/CCDC-Scripts/releases/latest/linux-hardening.tar.xz 
+    ```
+
+- Extract archive and enter directory
+
+    ```
+    tar -xpf linux-hardening.tar.xz
+    cd linux-hardening
     ```
 
 - Mark executable
@@ -349,7 +356,7 @@ Remember to check `/var/www/html`
     sudo usermod -aG sudo <username>
     ```
 
-- Change password (leave<username>blank to change password for current user)
+- Change password (leave `<username>` blank to change password for current user)
     
     ```
     passwd <username>
@@ -547,7 +554,7 @@ If you're lame and don't run Hayden's script follow these instructions
 
 ### Hardening Script
 
-- Located at https://github.com/archHavik/Useful-Scripts/tree/main/windows-hardening
+- Located at https://github.com/SUU-Cybersecurity-Club/CCDC-Scripts/tree/main/windows-hardening
 
 - README has instructions for running the script
 
@@ -555,14 +562,14 @@ If you're lame and don't run Hayden's script follow these instructions
 
     ```
     [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12;
-    Invoke-WebRequest https://github.com/archHavik/Useful-Scripts/archive/refs/heads/main.zip -Outfile Useful-Scripts.zip;
-    Expand-Archive -Path Useful-Scripts.zip -DestinationPath Useful-Scripts;
+    Invoke-WebRequest https://github.com/SUU-Cybersecurity-Club/CCDC-Scripts/releases/latest/windows-hardening.zip -Outfile windows-hardening.zip;
+    Expand-Archive -Path windows-hardening.zip -DestinationPath windows-hardening;
     ```
 
 - Run Script
 
     ```
-    cd Useful-Scripts\Useful-Scripts-main\windows-hardening;
+    cd windows-hardening;
     .\start.bat;
     ```
 
@@ -620,16 +627,29 @@ If you're lame and don't run Hayden's script follow these instructions
 
 ### Script
 
-- Download Script
+- Download scripts
+    
+    ```
+    curl -O https://github.com/SUU-Cybersecurity-Club/CCDC-Scripts/releases/latest/linux-hardening.tar.xz 
+    ```
+
+- Extract archive and enter directory
 
     ```
-    curl -O https://raw.githubusercontent.com/archHavik/Useful-Scripts/refs/heads/main/linux-hardening/start.sh -O https://raw.githubusercontent.com/archHavik/Useful-Scripts/refs/heads/main/linux-hardening/linux_wazuh_agent.sh
+    tar -xpf linux-hardening.tar.xz
+    cd linux-hardening
     ```
 
-- Change permissions and run script
-
+- Mark executable
+    
     ```
-    chmod +x start.sh linux_wazuh_agent.sh && ./start.sh
+    chmod +x start.sh linux_wazuh_agent.sh
+    ```
+
+- Run Scripts
+    
+    ```
+    ./start.sh
     ```
 
 ### Services
@@ -818,16 +838,29 @@ If you're lame and don't run Hayden's script follow these instructions
 
 ### Script
 
-- Download Script
+- Download scripts
+    
+    ```
+    curl -O https://github.com/SUU-Cybersecurity-Club/CCDC-Scripts/releases/latest/linux-hardening.tar.xz 
+    ```
+
+- Extract archive and enter directory
 
     ```
-    curl -O https://raw.githubusercontent.com/archHavik/Useful-Scripts/refs/heads/main/linux-hardening/start.sh -O https://raw.githubusercontent.com/archHavik/Useful-Scripts/refs/heads/main/linux-hardening/linux_wazuh_agent.sh
+    tar -xpf linux-hardening.tar.xz
+    cd linux-hardening
     ```
 
-- Run Script
-
+- Mark executable
+    
     ```
-    chmod +x start.sh linux_wazuh_agent.sh && ./start.sh
+    chmod +x start.sh linux_wazuh_agent.sh
+    ```
+
+- Run Scripts
+    
+    ```
+    ./start.sh
     ```
 
 ### Banner
@@ -939,16 +972,29 @@ If you're lame and don't run Hayden's script follow these instructions
 
 ### Script
 
-- Download Script
+- Download scripts
+    
+    ```
+    curl -O https://github.com/SUU-Cybersecurity-Club/CCDC-Scripts/releases/latest/linux-hardening.tar.xz 
+    ```
+
+- Extract archive and enter directory
 
     ```
-    curl -O https://raw.githubusercontent.com/archHavik/Useful-Scripts/refs/heads/main/linux-hardening/start.sh -O https://raw.githubusercontent.com/archHavik/Useful-Scripts/refs/heads/main/linux-hardening/linux_wazuh_agent.sh
+    tar -xpf linux-hardening.tar.xz
+    cd linux-hardening
     ```
 
-- Run Script
-
+- Mark executable
+    
     ```
-    chmod +x start.sh linux_wazuh_agent.sh && ./start.sh
+    chmod +x start.sh linux_wazuh_agent.sh
+    ```
+
+- Run Scripts
+    
+    ```
+    ./start.sh
     ```
 
 ### Firewall
@@ -1045,16 +1091,29 @@ If you're lame and don't run Hayden's script follow these instructions
 
 ### Script
 
-- Download Script
+- Download scripts
+    
+    ```
+    curl -O https://github.com/SUU-Cybersecurity-Club/CCDC-Scripts/releases/latest/linux-hardening.tar.xz 
+    ```
+
+- Extract archive and enter directory
 
     ```
-    curl -O https://raw.githubusercontent.com/archHavik/Useful-Scripts/refs/heads/main/linux-hardening/start.sh -O https://raw.githubusercontent.com/archHavik/Useful-Scripts/refs/heads/main/linux-hardening/linux_wazuh_agent.sh
+    tar -xpf linux-hardening.tar.xz
+    cd linux-hardening
     ```
 
-- Run Script
-
+- Mark executable
+    
     ```
-    chmod +x start.sh linux_wazuh_agent.sh && ./start.sh
+    chmod +x start.sh linux_wazuh_agent.sh
+    ```
+
+- Run Scripts
+    
+    ```
+    ./start.sh
     ```
 
 ### Firewall
@@ -1132,16 +1191,29 @@ If you're lame and don't run Hayden's script follow these instructions
 
 ### Script
 
-- Download Script
+- Download scripts
+    
+    ```
+    curl -O https://github.com/SUU-Cybersecurity-Club/CCDC-Scripts/releases/latest/linux-hardening.tar.xz 
+    ```
+
+- Extract archive and enter directory
 
     ```
-    curl -O https://raw.githubusercontent.com/archHavik/Useful-Scripts/refs/heads/main/linux-hardening/start.sh -O https://raw.githubusercontent.com/archHavik/Useful-Scripts/refs/heads/main/linux-hardening/linux_wazuh_agent.sh
+    tar -xpf linux-hardening.tar.xz
+    cd linux-hardening
     ```
 
-- Run Script
-
+- Mark executable
+    
     ```
-    chmod +x start.sh linux_wazuh_agent.sh && ./start.sh
+    chmod +x start.sh linux_wazuh_agent.sh
+    ```
+
+- Run Scripts
+    
+    ```
+    ./start.sh
     ```
 
 ### Backup 1
