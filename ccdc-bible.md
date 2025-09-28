@@ -30,7 +30,7 @@
    
     ```
     [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12;
-    Invoke-WebRequest https://github.com/SUU-Cybersecurity-Club/CCDC-Scripts/releases/latest/windows-hardening.zip -Outfile windows-hardening.zip;
+    Invoke-WebRequest https://github.com/SUU-Cybersecurity-Club/CCDC-Scripts/releases/latest/download/windows-hardening.zip -Outfile windows-hardening.zip;
     Expand-Archive -Path windows-hardening.zip -DestinationPath windows-hardening;
     ```
 
@@ -562,7 +562,7 @@ If you're lame and don't run Hayden's script follow these instructions
 
     ```
     [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12;
-    Invoke-WebRequest https://github.com/SUU-Cybersecurity-Club/CCDC-Scripts/releases/latest/windows-hardening.zip -Outfile windows-hardening.zip;
+    Invoke-WebRequest https://github.com/SUU-Cybersecurity-Club/CCDC-Scripts/releases/latest/download/windows-hardening.zip -Outfile windows-hardening.zip;
     Expand-Archive -Path windows-hardening.zip -DestinationPath windows-hardening;
     ```
 
