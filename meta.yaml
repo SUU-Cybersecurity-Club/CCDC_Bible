@@ -1,9 +1,0 @@
-title: "CCDC Bible"
-author: "CCDC Team Blood, Sweat, and Tears"
-geometry:
-  - margin=1in
-classoption:
-  - titlepage
-mainfont: "Noto Serif"
-sansfont: "Noto Sans"
-monofont: "Noto Sans Mono"
