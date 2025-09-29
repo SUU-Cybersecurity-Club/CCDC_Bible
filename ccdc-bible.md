@@ -1270,6 +1270,13 @@ If you're lame and don't run Hayden's script follow these instructions
     Wheel delete the apache apache text
     ```
 
+- Remove fake README
+
+    ```
+    chattr -i /etc/sudoers.d/README
+    rm /etc/sudoers.d/README
+    ```
+
 - Remove user `system` disable `apache` login
 
     ```
