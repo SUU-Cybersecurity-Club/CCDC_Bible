@@ -575,23 +575,19 @@ If you're lame and don't run Hayden's script follow these instructions
 
 # Operating Systems {.os}
 
-## **Debian 9** {.os #debian9}
-
-- Update DNS in `/etc/resolv.conf` to `8.8.8.8`
-
-- Update `/etc/apt/sources.list` to use correct repo location
-
-    ```
-    sed -i 's/deb.debian.org/archive.debian.org/g' /etc/apt/sources.list
-    sed -i 's/security.debian.org/archive.debian.org/g' /etc/apt/sources.list
-    sed -i '/stretch-updates/d' /etc/apt/sources.list
-    ```
-
 ## **Debian 10** {.os #debian10}
 
 ### Network
 
 - DNS: Should be `8.8.8.8`
+
+- Change apt repos to pull from archive mirror 
+
+    ```
+    sed -i 's/deb.debian.org/archive.debian.org/g' /etc/apt/sources.list 
+    sed -i 's/security.debian.org/archive.debian.org/g' /etc/apt/sources.list 
+    sed -i '/stretch-updates/d' /etc/apt/sources.list
+    ```
 
 ### User Admin
 
@@ -781,6 +777,13 @@ If you're lame and don't run Hayden's script follow these instructions
 
 - DNS: Should be `8.8.8.8`
 
+- Update apt repos to pull from archive mirror 
+
+    ```
+    sed -i 's/archive.ubuntu.com/old-releases.ubuntu.org/g' /etc/apt/sources.list
+    sed -i 's/security.ubntu.com/old-releases.ubuntu.org/g' /etc/apt/sources.list
+    ```
+
 ### User Admin
 
 - Change passwords
@@ -916,6 +919,13 @@ If you're lame and don't run Hayden's script follow these instructions
 
 - Point DNS to `8.8.8.8`
 
+- Update apt repos to pull from archive mirror 
+
+    ```
+    sed -i 's/archive.ubuntu.com/old-releases.ubuntu.org/g' /etc/apt/sources.list
+    sed -i 's/security.ubntu.com/old-releases.ubuntu.org/g' /etc/apt/sources.list
+    ```
+
 ### User Admin
 
 - Change passwords
@@ -1013,6 +1023,12 @@ If you're lame and don't run Hayden's script follow these instructions
 ### Network
 
 - DNS: Should be `8.8.8.8`
+
+- Update yum repos to pull from vault mirror 
+
+    ```
+    sed -i -E 's|mirror\.centos\.org|vault.centos.org|g; s|^#baseurl=http://vault|baseurl=http://vault|' /etc/yum.repos.d/*.repo 
+    ```
 
 ### User Admin
 
@@ -1166,6 +1182,13 @@ If you're lame and don't run Hayden's script follow these instructions
 ### Network
 
 - DNS: Should be `1.1.1.1`
+
+- Update dnf repos to pull from archive mirror 
+
+    ```
+    sed -i -E 's/^(metalink|mirrorlist)=/#\0/' /etc/yum.repos.d/fedora*.repo 
+    sed -i -E "/^\[fedora\]/,/^\[/{s|^[# ]*baseurl=.*|baseurl=https://archives.fedoraproject.org/pub/archive/fedora/linux/releases/\$releasever/Everything/\$basearch/os/}; /^\[updates\]/,/^\[/{s|^[# ]*baseurl=.*|baseurl=https://archives.fedoraproject.org/pub/archive/fedora/linux/updates/\$releasever/Everything/\$basearch/}" /etc/yum.repos.d/fedora.repo /etc/yum.repos.d/fedora-updates.repo
+    ```
 
 ### User Admin
 
