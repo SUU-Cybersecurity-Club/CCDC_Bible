@@ -1,0 +1,1100 @@
+== Linux Addendum
+
+=== AIDE (File Integrity Checks)
+
+.Debian/Ubuntu
+[source,console]
+----
+# apt install aide
+# aide -i --config /etc/aide/aid.config > aidebackup &
+# mv /var/lib/aide/aide.db.new /var/lib/aide/aide.db
+----
+
+.Arch/Red Hat/Fedora/CentOS/Oracle
+[source,console]
+----
+# dnf install aide
+# aide -i --config /etc/aide.config > aidebackup &
+# mv /var/lib/aide.db.new.gz /var/lib/aide/aide.db.gz
+----
+
+[NOTE]
+.NOTE
+====
+If you can't see all of the output from the previous command, run the following
+[source,console]
+----
+# less /var/log/aide/aide.log
+----
+====
+
+.Debian/Ubuntu
+[source,console]
+----
+# aide -C -c /etc/aide/aide.conf <.>
+----
+<.> Manually specify configuration
+
+.Arch/Red Hat/Fedora/CentOS/Oracle
+[source,console]
+----
+# aide -C -c /etc/aide.conf <.>
+----
+<.> Manually specify configuration
+
+[NOTE]
+.NOTE
+====
+If all file changes are legitimate, run the following to update the database
+
+.Debian/Ubuntu
+[source,console]
+----
+# aide -u
+# mv /var/lib/aide/aide.db.new /var/lib/aide/aide.db
+----
+
+.Arch/Red Hat/Fedora/CentOS/Oracle
+[source,console]
+----
+# aide -u
+# mv /var/lib/aide/aide.db.new.gz /var/lib/aide/aide.db.gz
+----
+====
+
+<<<
+
+=== Apache
+
+.Debian/Ubuntu
+[source,console]
+----
+# apt update && sudo apt install apache2 <.>
+----
+<.> Install Apache web server
+
+.Red Hat/Fedora/CentOS/Oracle
+[source,console]
+----
+# dnf install httpd <.>
+----
+<.> Install Apache web server
+
+.Debian/Ubuntu
+[source,console]
+----
+# systemctl start apache2 <.>
+----
+<.> Start the Apache service
+
+.Red Hat/Fedora/CentOS/Oracle
+[source,console]
+----
+# systemctl start httpd <.>
+----
+<.> Start the Apache services
+
+.Debian/Ubuntu
+[source,console]
+----
+# systemctl enable apache2 <.>
+----
+<.> Enable Apache to start on boot
+
+.Red Hat/Fedora/CentOS/Oracle
+[source,console]
+----
+# systemctl enable httpd <.>
+----
+<.> Enable Apache to start on boot
+
+.All
+[source,console]
+----
+# tar -cpf ht.tar /var/www/html
+# cp ht.tar [backup location] <.>
+----
+<.> Backup website
+
+.CAUTION
+CAUTION: Check `/opt` as well for any other web files
+
+.Debian/Ubuntu
+[source,console]
+----
+# ls /etc/apache2/sites-enabled <.>
+----
+<.> Check all enabled sites
+
+.Red Hat/Fedora/CentOS/Oracle
+[source,console]
+----
+# ls /etc/httpd/sites-enabled <.>
+----
+<.> Check all enabled sites
+
+.WARNING
+WARNING: If `phpmyadmin` is present, remove immediately
+
+<<<
+
+=== Auditd
+
+==== Auditd Setup 
+
+.Debian/Ubuntu
+[source,console]
+----
+# apt install auditd audispd-plugins <.>
+----
+<.> Install auditd
+
+.Red Hat/Fedora/CentOS/Oracle
+[source,console]
+----
+# dnf install audit <.>
+----
+<.> Install auditd
+
+.All
+[source,console]
+----
+# $EDITOR /etc/audit/rules.d/99-custom.conf
+----
+
+Add the following lines to `/etc/audit/rules.d/99-custom.conf`
+
+----
+-a always,exit -F arch=b64 -S creat,open,openat,truncate,ftruncate -F exit=-EACCES -F auid>=1000 -F auid!=unset -k access
+-a always,exit -F arch=b64 -S creat,open,openat,truncate,ftruncate -F exit=-EPERM -F auid>=1000 -F auid!=unset -k access
+-a always,exit -F arch=b32 -S creat,open,openat,truncate,ftruncate -F exit=-EACCES -F auid>=1000 -F auid!=unset -k access
+-a always,exit -F arch=b32 -S creat,open,openat,truncate,ftruncate -F exit=-EPERM -F auid>=1000 -F auid!=unset -k access
+# Unsuccessful file access attempts (key: access)
+
+-w /etc/group -p wa -k identity
+-w /etc/passwd -p wa -k identity
+-w /etc/shadow -p wa -k identity
+-w /etc/pam.conf -p wa -k identity
+-w /etc/pam.d -p wa -k identity
+## Modifications to user/group info (key: identity)
+
+-a always,exit -F arch=b64 -S chmod,fchmod,fchmodat,chown,fchown,lchown,fchownat -F auid>=1000 -F auid!=unset -F key=perm_mod
+-a always,exit -F arch=b32 -S chmod,fchmod,fchmodat,chown,fchown,lchown,fchownat -F auid>=1000 -F auid!=unset -F key=perm_mod
+-a always,exit -F arch=b64 -S setxattr,lsetxattr,fsetxattr,removexattr,lremovexattr,fremovexattr -F auid>=1000 -F auid!=unset -F key=perm_mod
+-a always,exit -F arch=b32 -S setxattr,lsetxattr,fsetxattr,removexattr,lremovexattr,fremovexattr -F auid>=1000 -F auid!=unset -F key=perm_mod
+## Modifications to ownership, group, permissions, attributes (key: perm_mod)
+
+-w /var/run/utmp -p wa -k session
+-w /var/log/wtmp -p wa -k session
+-w /var/log/btmp -p wa -k session
+## Track session creations (key: session)
+
+-w /var/log/lastlog -p wa -k logins
+-w /var/run/faillock -p wa -k logins
+## Track successful and failed logins (key: logins)
+
+-a always,exit -F arch=b64 -S unlink,unlinkat,rename,renameat -F auid>=1000 -F auid!=unset -k delete
+-a always,exit -F arch=b32 -S unlink,unlinkat,rename,renameat -F auid>=1000 -F auid!=unset -k delete
+## Track file deletions (key: delete)
+
+-a always,exit -F path=/usr/sbin/usermod -F perm=x -F auid>=1000 -F auid!=unset -k priv_comm
+-a always,exit -F path=/usr/bin/passwd -F perm=x -F auid>=1000 -F auid!=unset -k priv_comm
+-a always,exit -F path=/usr/bin/sudo -F perm=x -F auid>=1000 -F auid!=unset -k priv_comm
+-a always,exit -F path=/usr/bin/su -F perm=x -F auid>=1000 -F auid!=unset -k priv_comm
+-a always,exit -F path=/usr/sbin/useradd -F perm=x -F auid>=1000 -F auid!=unset -k priv_comm
+-a always,exit -F path=/usr/sbin/userdel -F perm=x -F auid>=1000 -F auid!=unset -k priv_comm
+## Track usage of tools requiring elevated permissions (key: priv_comm)
+----
+
+Save and close the file, then run
+
+[source,console]
+----
+# augenrules --load
+----
+
+==== Auditd Usage
+
+.Get quick overview of audit logs & get help on all possible reports
+[source,console]
+----
+# aureport --help
+----
+
+.Events in general
+[source,console]
+----
+# aureport -i -e 
+----
+
+.Events based on keys
+[source,console]
+----
+# aureport -i -k
+----
+
+.Commands run
+[source,console]
+----
+# aureport -i --comm 
+----
+
+.File interactions
+[source,console]
+----
+# aureport -i -f 
+----
+
+.User actions
+[source,console]
+----
+# aureport -i -u
+----
+
+.Actions by process IDs
+[source,console]
+----
+# aureport -i -p
+----
+
+.Executables ran
+[source,console]
+----
+# aureport -i -x
+----
+
+.Syscalls
+[source,console]
+----
+# aureport -i -s
+----
+
+.Terminals
+[source,console]
+----
+# aureport -i -tm
+----
+
+.Search for specific event ID
+[source,console]
+----
+# ausearch -a <event ID>
+----
+
+.TIP
+TIP: If you want more specific information, take note of the event ID in any of the reports, and use the prior command. Ausearch can also be used to get more specific searches, and see more specific information about audit logs
+
+<<<
+
+=== Backup and Restore
+
+Backup or Tar file
+
+[source,console]
+----
+# tar -cpf [backup-name].tar [thing-to-back-up]
+----
+
+Restore or Untar file
+
+[source,console]
+----
+# tar -xpf [backup-name].tar
+----
+
+.CAUTION
+CAUTION: The `-p` tag in the `tar` command specifies for file permissions to be retained. Not setting this flag can break functionality if services need to be restored
+
+<<<
+
+=== Binary/Package Check
+
+.Debian/Ubuntu
+[source,console]
+----
+# apt update && apt install -y debsums
+# debsums -s <.>
+----
+<.> Scans for changed or missing package files
+
+.Red Hat/Fedora/CentOS/Oracle
+[source,console]
+----
+# rpm -Va <.>
+----
+<.> Scans for changed or missing package files
+
+<<<
+
+=== Cockpit
+
+.Red Hat/Fedora/CentOS/Oracle
+[source,console]
+----
+# systemctl stop cockpit
+# systemctl disable cockpit
+# dnf remove cockpit
+----
+
+WARNING: Always stop and remove cockpit
+
+<<<
+
+=== Cron Jobs
+
+[source,console]
+----
+# crontab -l <.>
+# crontab -l -u [user] <.>
+# cat /etc/crontab <.>
+----
+<.> List crontabs for root user
+<.> List crontabs for [user]
+<.> Check system level crontab
+
+[source,console]
+----
+# crontab -e <.>
+# crontab -e -u [user] <.>
+# $EDITOR /etc/crontab <.>
+----
+<.> Edit crontabs for root user
+<.> Edit crontabs for [user]
+<.> Edit system level crontab
+
+<<<
+
+=== DNS
+
+Edit `/etc/resolv.conf` and add
+
+[source,config]
+----
+nameserver 8.8.8.8
+nameserver 8.8.4.4
+----
+
+.NOTE
+NOTE: This will only temporarily force DNS, and will be wiped on reboot
+
+<<<
+
+=== Groups
+
+[source,console]
+----
+# getent group <.>
+# getent group [user] <.>
+# groups <.>
+# cat /etc/group <.>
+# awk -F':' -v OFS='\t' '{if ($4) print $1, $4}' /etc/group <.>
+# id <.>
+----
+<.> Display `/etc/group` 
+<.> Check groups user belongs to
+<.> Show groups current user belongs to
+<.> Display `/etc/group`
+<.> Show all groups that have members, and who those members are
+<.> Show user uid and gid, and gid and group names for groups the user is a member of
+
+.CAUTION
+CAUTION: Make sure to check members of `sudo`/`wheel`
+
+<<<
+
+=== IP and Gateway
+
+[source,console]
+----
+# ip a <.>
+# ip r <.>
+# nmcli device show <.>
+# ifconfig <.>
+# route -n <.>
+----
+<.> Show network interfaces with their IP and MAC addresses
+<.> Show routes/gateway
+<.> Get IP, MAC, and routes/gateway
+<.> Show network interfaces with their IP and MAC addresses
+<.> Show routes/gateway
+
+.NOTE
+NOTE: `nmcli` will only work on systems with `NetworkManager` installed
+
+<<<
+
+=== Logij Banner
+
+Edit `/etc/ssh/sshd_config`
+
+Ensure the following line is present and not commented out
+
+[source,config]
+----
+Banner /etc/issue.net <.>
+----
+<.> Allows SSH to use text in `/etc/issue.net`
+
+Edit/Create `/etc/issue.net`
+
+[source,config]
+----
+[Banner text]
+----
+
+Edit/Create `/etc/issue`
+
+[source,config]
+----
+[Banner text]
+----
+
+Restart SSH
+
+[source,console]
+----
+# systemctl restart sshd
+----
+
+Take a screenshot of banner
+
+<<<
+
+=== MariaDB/MySQL
+
+[source,console]
+----
+# mysql -u [username] -p -e "SHOW DATABASES; EXIT;" <.>
+----
+<.> List databases
+
+[source,console]
+----
+# mysqldump -u [username] -p [database_name] > [database_name]_backup.sql <.>
+# mysqldump -u [username] -p [database_name table_name] > [table_name]_backup.sql <.>
+----
+<.> Backup database
+<.> Backup table
+
+[source,console]
+----
+# mysql -u username -p [database name] < [database file].sql <.>
+# mysql -u username -p [database name] < [table file].sql <.>
+----
+<.> Create copy database from backup
+<.> Create copy table from backup
+
+.CAUTION
+CAUTION: You must use a different name for your copy database and table
+
+[source,console]
+----
+# mysql -u username -p -e "DROP DATABASE IF EXISTS [name]; CREATE DATABASE [name];" <.>
+# mysql -u username -p [name] < [database file].sql <.>
+# mysql -u username -p -e "USE [database name]; DROP TABLE IF EXISTS [table name];" <.>
+# mysql -u username -p [database name] < [table name].sql <.>
+----
+<.> Delete existing database, then create empty database with same name
+<.> Restore database from backup file
+<.> Delete existing table, then create empty table with same name
+<.> Restore table from backup file
+
+[source,console]
+----
+# mysql_secure_installation <.>
+----
+<.> Set root password, will require updating application settings
+
+[source,console]
+----
+# mysql -u root -p -e "USE mysql; ALTER USER 'root'@'%' IDENTIFIED BY 'new_secure_password';" <.>
+----
+<.> Change user password, will require updating application settings
+
+[source,console]
+----
+# mysql -u root -p -e "SELECT User, Host FROM mysql.user;" <.>
+----
+<.> Show users
+
+[source,console]
+----
+# mysql -u root -p -e "CREATE USER 'new_user'@'localhost' IDENTIFIED BY 'user_password';" <.>
+----
+<.> Add user
+
+.WARNING
+WARNING: Either block `TCP 3306` or only allow between machines that need it
+
+<<<
+
+=== Nmap
+
+.Debian/Ubuntu
+[source,console]
+----
+# apt update && apt upgrade -y
+# apt install nmap -y
+----
+
+.Fedora/CentOS
+[source,console]
+----
+# dnf upgrade --refresh -y
+# dnf install nmap -y
+----
+
+[source,console]
+----
+# nmap -sV -T4 -p- [ip/localhost] > nmap <.>
+----
+<.> Run nmap scan checking for service versions, running a fast scan, against specified ip
+
+<<<
+
+=== Port Scan
+
+[source,console]
+----
+# ss -autpn <.>
+----
+<.> List all listening TCP/UDP ports with process info
+
+[source,console]
+----
+# netstat -tulnp <.>
+----
+<.> List all listening TCP/UDP ports with process info
+
+[source,console]
+----
+# ss -tuln <.>
+# ss -tan <.>
+# ss -uan <.>
+----
+<.> Show only listening sockets 
+<.> Show all TCP sockets
+<.> Show all UDP sockets
+
+<<<
+
+=== Process Killing
+
+[source,console]
+----
+# kill -9 [pid] <.>
+# kill -15 [pid] <.>
+# kill -2 [pid] <.>
+----
+<.> Force kill process (`SIGKILL`)
+<.> Terminate process (`SIGTERM`)
+<.> Interrupt process (`SIGINT`)
+
+<<<
+
+=== Process Lists
+
+[source,console]
+----
+# ps -eaf | less <.>
+# ps -eaf --forest | less <.>
+# ps -u [user] <.>
+----
+<.> List all running processes
+<.> Show process tree with hierarchy and relationships
+<.> Show processes running for specific user
+
+<<<
+
+=== SSH
+
+Backup `/etc/ssh`
+
+[source,console]
+----
+# tar -cpf ssh.tar /etc/ssh
+# cp ssh.tar [backup location]
+----
+
+Removal
+
+.WARNING
+WARNING: Only remove `ssh` if not scored
+
+.Debian/Ubuntu
+[source,console]
+----
+# apt remove openssh-server
+----
+
+.Red Hat/Fedora/CentOS/Oracle
+[source,console]
+----
+# dnf remove openssh-server
+----
+
+.All
+[source,console]
+----
+# systemctl daemon-reload
+----
+
+////
+TODO: Add configuration guide
+////
+
+<<<
+
+=== Services
+
+[source,console]
+----
+# systemctl list-units --type=service <.>
+# systemctl list-units --type=service --state=running <.>
+# systemctl list-units --type=service --state=enabled <.>
+# systemctl list-units --type=service | grep -i [service name] <.>
+----
+<.> List all loaded services
+<.> List all running services
+<.> List all enabled services that start on boot
+<.> Search services
+
+<<<
+
+=== Snoopy
+
+==== Installation
+
+.CentOS
+[source,console]
+----
+# curl -o snoopy-packages-key.pub https://a2o.github.io/snoopy-packages/snoopy-packages-key.pub
+# rpm --import snoopy-packages-key.pub
+ 
+# echo "[snoopy-stable]
+  name=Snoopy Upstream Stable Repository
+  baseurl=https://a2o.github.io/snoopy-packages/repo/centos/[version]/stable/
+  enabled=1
+  gpgcheck=1
+  " > /etc/yum.repos.d/snoopy-stable.repo
+ 
+# yum install snoopy
+----
+
+.Debian
+[source,console]
+----
+# curl https://a2o.github.io/snoopy-packages/snoopy-packages-key.pub | apt-key add -
+# echo "deb https://a2o.github.io/snoopy-packages/repo/debian [release keyword] stable" > /etc/apt/sources.list.d/snoopy-stable.list
+# apt update
+# apt install snoopy
+----
+
+.Ubuntu
+[source,console]
+----
+# curl https://a2o.github.io/snoopy-packages/snoopy-packages-key.pub | apt-key add -
+# echo "deb https://a2o.github.io/snoopy-packages/repo/ubuntu [release keyword] stable" > /etc/apt/sources.list.d/snoopy-stable.list
+# apt update
+# apt install snoopy
+----
+
+==== Configuration
+
+[source,console]
+----
+# $EDITOR /etc/snoopy.ini
+# snoopyctl conf
+----
+
+==== Usage
+
+[source,console]
+----
+# snoopyctl
+----
+
+.NOTE
+NOTE: Logs to `/var/log/snoopy.log`
+
+<<<
+
+=== Splunk Server/Indexer
+
+==== Installation
+
+[source,console]
+----
+# wget [install link]
+----
+
+TIP: Comment out lines 825 and 826 to fix `HTTPS` issue
+
+[source,console]
+----
+# ./splunk.sh -i <.>
+----
+<.> Install Server/Indexer
+
+[NOTE]
+.NOTE
+====
+Set user: `splunk`
+Splunk Logs: `/opt/splunk/var/log/splunk`
+====
+
+.CAUTION
+CAUTION: Restart splunk after install
+
+==== Usage
+
+[source,console]
+----
+# systemctl [start/stop/status] Splunkd.service
+----
+
+.TIP
+TIP: WebUI password can be changed from within WebUI itself
+
+<<<
+
+=== Splunk Forwarder or Client/Agent
+
+==== Installation
+
+[source,console]
+----
+# wget [install link]
+----
+
+[source,console]
+----
+# ./splunk.sh -f [indexer IP] <.>
+----
+<.> Install Client/Forwarder
+
+[NOTE]
+.NOTE
+====
+Set user: `splunkfwd`
+Set password: Same as `printer` user on host
+====
+
+==== Usage
+
+[source,console]
+----
+# ./splunk.sh -i <.>
+# ./splunk.sh -D <.>
+----
+<.> Reinstall splunk
+<.> Debug only forwarder
+
+.TIP
+TIP: Changing process user password is easiest with a reinstall
+
+[source,console]
+----
+# /opt/splunk/bin/splunk [start/stop/status]
+----
+
+[source,console]
+----
+# ./splunk.sh -a [path] <.>
+----
+<.> Add a new file for splunk to monitor and send logs from, it’ll ask for an index to assign it to, options are main, web, linux, snoopy, system, misc.
+
+<<<
+
+=== Sudoers
+
+[source,console]
+----
+# visudo <.>
+----
+<.> Show and edit sudoers config
+
+[source,console]
+----
+# ls /etc/sudoers.d/ <.>
+# cat /etc/sudoers.d/[file] <.>
+----
+<.> Check for additional configuration files
+<.> Check content of any additional configuration files
+
+.WARNING
+WARNING: Watch out for any users/groups that have `ALL=(ALL:ALL) ALL` this allows the user or group members to run any command as `root`
+
+<<<
+
+=== Suricata
+
+==== Installation
+
+.Debian/Ubuntu
+[source,console]
+----
+# apt update && apt install -y suricata
+----
+
+.Red Hat/Fedora/CentOS/Oracle
+[source,console]
+----
+# dnf install -y epel-release <.>
+# dnf install -y suricata
+----
+<.> Needed for repo to pull suricata from
+
+==== Configuration
+
+.Debian/Ubuntu
+--
+Edit `/etc/suricata/suricata.yaml`
+
+Set `HOME_NET` to your network range
+
+[source,yaml]
+----
+vars:
+  address-groups:
+    HOME_NET: "[IP/CIDR]"
+----
+
+Update suricata
+
+[source,console]
+----
+# suricata-update
+----
+--
+
+.Red Hat/Fedora/CentOS/Oracle
+--
+Edit `/etc/suricata/suricata.yaml`
+
+Set interface under `af-packet`
+
+[source,yaml]
+----
+af-packet:
+  - interface: [interface]
+----
+
+Update suricata
+
+[source,console]
+----
+# suricata-update list-sources <.>
+# suricata-update enable-sources [source-name] <.>
+# suricata-update <.>
+----
+<.> List available rulesets
+<.> Enable ruleset
+<.> Update again
+--
+
+==== Usage
+
+[source,console]
+----
+# systemctl enable --now suricata <.>
+# suricata -T -c /etc/suricata/suricata.yaml <.>
+# less /var/log/suricata/fast.log <.>
+# less /var/log/suricata/eve.json <.>
+# less /var/log/suricata/stats.log <.>
+# grep -i "et malware" /var/log/suricata/fast.log <.>
+# grep -i "et trojan" /var/log/suricata/fast.log <.>
+# grep -i "et scan" /var/log/suricata/fast.log <.>
+----
+<.> Start and enable on boot
+<.> Test config for errors without starting
+<.> Quick one-line alert log, easiest to read
+<.> Full JSON log with all details (alerts, dns, http, tls, flow)
+<.> Performance and packet stats
+<.> Search for malware signature hits
+<.> Search for trojan signature hits
+<.> Search for scan/recon activity
+
+<<<
+
+=== Users
+
+[source,console]
+----
+$ getent passwd <.>
+$ cat /etc/passwd <.>
+$ getent passwd | awk -F':' -v OFS='\t' '{if ($7 == "/bin/bash" || $7 == "/bin/sh" || $7 == "/bin/ash" || $7 == "/bin/dash")  {print $1, $5, $7}}' <.>
+$ awk -F':' -v OFS='\t' '{if ($7 == "/bin/bash" || $7 == "/bin/sh" || $7 == "/bin/ash" || $7 == "/bin/dash")  {print $1, $5, $7}}' /etc/passwd <.>
+----
+<.> Display `/etc/passwd`
+<.> Display `/etc/passwd`
+<.> Show all users, user descriptions, and shells of users who's shells match common shells
+<.> Show all users, user descriptions, and shells of users who's shells match common shells
+
+<<<
+
+=== Zeek
+
+==== Install
+
+.Debian/Ubuntu
+[source,console]
+----
+# apt update && apt install -y zeek
+----
+
+If not present in default repos
+
+[source,console]
+----
+# echo 'deb http://download.opensuse.org/repositories/security:/zeek/xUbuntu_24.04/ /' | sudo tee /etc/apt/sources.list.d/zeek.list
+# curl -fsSL https://download.opensuse.org/repositories/security:/zeek/xUbuntu_24.04/Release.key | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/zeek.gpg > /dev/null
+# ppt update
+----
+
+.Red Hat/Fedora/CentOS/Oracle
+[source,console]
+----
+# dnf install -y zeek
+----
+
+If not present in default repos
+
+[source,console]
+----
+# dnf install -y 'dnf-command(copr)'
+# dnf copr enable @zeek/zeek
+----
+
+==== Configure
+
+Edit `/opt/zeek/etc/node.cfg` and add the following
+
+.Set sniffing interface to actual interface
+[source,config]
+----
+interface=[ifname]
+----
+
+Edit `/opt/zeek/etc/node.cfg` and add the following
+
+.Define local networks
+[source,config]
+----
+[IP-Range/Subnet] <.>
+----
+<.> One network per line
+
+==== Usage
+
+.Start zeek and begin monitoring
+[source,console]
+----
+# /opt/zeek/bin/zeekctl [deploy/start/stop]
+----
+
+
+.Check if running
+[source,console]
+----
+# /opt/zeek/bin/zeekctl [status/diag]
+----
+
+==== Log Locations
+
+:!example-caption:
+
+.Current active logs
+====
+`/opt/zeek/logs/current/`
+====
+
+.Every connection MOST IMPORTANT
+====
+`/opt/zeek/logs/current/conn.log`
+====
+
+.Every DNS query and response with domain names
+====
+`/opt/zeek/logs/current/dns.log`
+====
+
+.HTTP requess, URLs, user agents, methods
+====
+`/opt/zeek/logs/current/http.log`
+====
+
+.TLS/SSL connections: certs, SNI (domain over HTTPS)
+====
+`/opt/zeek/logs/current/ssl.log`
+====
+
+.Files seen on the wire: type, size, hashes
+====
+`/opt/zeek/logs/current/files.log`
+====
+
+.Protocol violations and unusual behavior
+====
+`/opt/zeek/logs/current/weird.log`
+====
+
+.Zeek's built-in alerts and notice
+====
+`/opt/zeek/logs/current/notice.log`
+====
+
+==== Log Parse Examples
+
+.Search for specific domain in DNS logs
+[source,console]
+----
+# grep -i "suspicious-domain.com" /opt/zeek/logs/current/dns.log
+----
+
+.Search all connections involving a specific IP
+[source,console]
+----
+# grep "[IP]" /opt/zeek/logs/current/conn.log
+----
+
+.Show all HTTPS connections
+[source,console]
+----
+# grep -E "\b443\b" /opt/zeek/logs/current/conn.log | less
+----
+
+.Search for common suspicious ports in connections
+[source,console]
+----
+# grep -E "\b(4444|5555|8080|1337|9001)\b" /opt/zeek/logs/current/conn.log
+----
+
+.Find traffic on port 53 that isn't DNS (possible DNS tunneling)
+[source,console]
+----
+# grep -v "dns" /opt/zeek/logs/current/conn.log | grep -E "\b53\b"
+----
+
+==== Beacon Hunting
+
+.Review connections with duration and byte counts
+[source,console]
+----
+# cat /opt/zeek/logs/current/conn.log | zeek-cut id.orig_h id.resp_h id.resp_p duration orig_bytes resp_bytes | sort | less
+----
+
+.Top 20 most connected-to destination IPs. Beacons will have high counts
+[source,console]
+----
+# cat /opt/zeek/logs/current/conn.log | zeek-cut id.resp_h | sort | uniq -c | sort -rn | head -20
+----
+
+.Top 20 source-destination IP pairs by connection count
+[source,console]
+----
+# cat /opt/zeek/logs/current/conn.log | zeek-cut id.orig_h id.resp_h | sort | uniq -c | sort -rn | head -20
+----
+
+.NOTE
+NOTE: `zeek-cut` is Zeek's built-in column extraction tool. If `zeek-cut` is not found use: `/opt/zeek/bin/zeek-cut`

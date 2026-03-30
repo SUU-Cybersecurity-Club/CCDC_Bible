@@ -1,0 +1,669 @@
+== Firewall Addendum
+
+=== Palo Alto
+
+:!example-caption:
+
+.Set Inbound Firewall Rules
+====
+menu:Source: Untrust[Destination: Trust > Application/Service > Actions: Allow/Deny/Drop] 
+====
+
+.Set Outbound Firewall Rules
+====
+menu:Source: Trust[Destination: Untrust > Application/Service > Actions: Allow/Deny/Drop] 
+====
+
+.Block IP
+====
+menu:Source: Address[Destination: Any > Application/Service: Any > Actions: Deny/Drop] 
+====
+
+.Restrict access to Web Interface
+====
+menu:Network[Network Profiles > Interface Mgmt > Add > Add IP Addresses to Allow] 
+====
+
+:example-caption:
+
+.Example Firewall Rules
+====
+image:{imagedir}firewall/palo-example-rules.png[Palo Example Firewall Rules]
+====
+
+<<<
+
+=== Cisco
+
+:!example-caption:
+
+.Set Inbound Firewall Rules
+====
+menu:Source[Zone > Outside_Zone | Destination > Zone > Inside_Zone] 
+====
+
+.Set Outbound Firewall Rules
+====
+menu:Source[Zone > Inside_Zone | Destination > Zone > Outside_Zone] 
+====
+
+.Block IP
+====
+menu:Source Networks[Create New Network, Enter IP, Set Rule to BLOCK] 
+====
+
+.Restrict access to Web Interface
+====
+menu:Device[System Settings > Management Access > Management Interface > Add IPs to Allowed Networks] 
+====
+
+:example-caption:
+
+.Example Firewall Rules
+====
+image:{imagedir}firewall/cisco-example-rules.png[Cisco Example Firewall Rules]
+====
+
+<<<
+
+=== VyOS
+
+.Set User Password
+[source,config]
+----
+configure
+set system login user [user] authentication plaintext-password [new-password]
+commit
+save
+----
+
+<<<
+
+=== Windows firewall
+
+.Turn on Firewall
+[source,powershell]
+----
+> Set-NetFirewallProfile Domain,Public,Private -Enabled True
+----
+
+.Generic block TCP port rule
+[source,powershell]
+----
+> New-NetFirewallRule`
+    -DisplayName "Block TCP 445 Inbound"`
+    -Direction Inbound`
+    -Protocol TCP`
+    -LocalPort 80`
+    -Action Block
+----
+
+[TIP]
+.TIP
+====
+You can change the protocol to `udp` to block a udp port +
+If you want to block a range of ports, change the `LocalPort` value to a range like: `5000-6000`
+====
+
+.Block outbound traffic
+[source,powershell]
+----
+> New-NetFirewallRule `
+    -DisplayName "Block TCP 443 Outbound" `
+    -Direction Outbound `
+    -Protocol TCP `
+    -RemotePort 443 `
+    -Action Block
+----
+
+.NOTE
+NOTE: This uses a different flag than the inbound rule, instead of `LocalPort` it uses `RemotePort`
+
+.Block a certain address
+[source,powershell]
+----
+> New-NetFirewallRule `
+    -DisplayName "Block RDP from 192.168.1.50" `
+    -Direction Inbound `
+    -RemoteAddress 192.168.1.50 `
+    -LocalPort 3389 `
+    -Protocol TCP `
+    -Action Block
+----
+
+.Remove a rule
+[source,powershell]
+----
+> Remove-NetFirewallRule -DisplayName "[rule name]"
+----
+
+.Get all rules
+[source,powershell]
+----
+> Get-NetFirewallRule
+----
+
+.Only get certain info from rules
+[source,powershell]
+----
+> Get-NetFirewallRule | Select-Object DisplayName, Enabled, Direction, Action, Profile
+----
+
+<<<
+
+=== Iptables
+
+.Generate text list of all tables
+[source,console]
+----
+# iptables-save
+----
+
+.List default table in numeric format and verbose
+[source,console]
+----
+# iptables -L -n -v
+----
+
+.List specifc table in numeric format and verbose
+[source,console]
+----
+# iptables -t [table] -L -n -v
+----
+
+.List all rules with line numbers
+[source,console]
+----
+# iptables -L --line-numbers
+----
+
+.Set default chain acction
+[source,console]
+----
+# iptables -P [chain] [DROP/ACCEPT]
+----
+
+.Drop all by default (except necessary ports)
+====
+[source,console]
+----
+# iptables -A INPUT -p tcp --dport 22 -j ACCEPT
+# iptables -A INPUT -i lo -j ACCEPT
+# iptables -P INPUT DROP
+----
+====
+
+.Create rule to chain with protocol, destination port, source port, accept or reject
+[source,console]
+----
+# iptables -A [chain] -p [tcp/udp] [--dport/--sport] [port] -j [ACCEPT/REJECT/DROP]
+----
+
+.Allow return traffic for connections host initiated
+[source,console]
+----
+# iptables -A INPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
+----
+
+.Append rule to end of specific chain
+[source,console]
+----
+# iptables -A [chain] [rule]
+----
+
+.Insert rule at the top of specific chain
+[source,console]
+----
+# iptables -I [chain] [number]
+----
+
+.Insert rules at specific line number
+[source,console]
+----
+# iptables -I [chain] [number] [rule]
+----
+
+.Replace an existing rule at specific line number with new definition
+[source,console]
+----
+# iptables -R [chain] [number] [new rule]
+----
+
+.Delete rule by specific line number
+[source,console]
+----
+# iptables -D [chain] [number]
+----
+
+.Silently discard all packets from specific source without sending response
+[source,console]
+----
+# iptables -A INPUT -s [IP/Subnet] -j DROP
+----
+
+.Block all traffic from specific source IP
+[source,console]
+----
+# iptables -A INPUT -s [IP] -j DROP
+----
+
+.Allow all traffic though specific interface
+[source,console]
+----
+# iptables -A INPUT -i [ifname] -j ACCEPT
+----
+
+.Common NAT rule to allow internal traffic to share external IP
+[source,console]
+----
+# iptables -t nat -A POSTROUTING -o [ifname] -j MASQUERADE
+----
+
+.Flush all rules in current table (clear config)
+[source,console]
+----
+# iptables -F
+----
+
+.Install package to automate rule loading on boot
+[source,console]
+----
+# apt install iptables-persistent
+----
+
+.Save current runtime rules to `/etc/iptables/rules.v4`
+[source,console]
+----
+# netfilter-persistent save
+----
+
+.Load saved rules into kernel
+[source,console]
+----
+# netfilter-persistent start
+----
+
+.Ensure service starts automaticall at boot
+[source,console]
+----
+# systemctl enable netfilter-persistent
+----
+
+<<<
+
+=== ufw
+
+.Flush all rules and disable firewall
+[source,console]
+----
+# ufw reset
+----
+
+.Enable UFW and ensure it starts at boot
+[source,console]
+----
+# ufw enable
+----
+
+.Disable UFW
+[source,console]
+----
+# ufw disable
+----
+
+.Reload firewall to apply changes made to config files
+[source,consle]
+----
+# ufw reload
+----
+
+.Generate text of all firewall rules
+[source,console]
+----
+# ufw status verbose
+----
+
+.List raw netfilter rules in numeric format and verbose
+[source,console]
+----
+# ufw short raw
+----
+
+.List all rules with current line numbers
+[source,console]
+----
+# ufw status numbered
+----
+
+.Set chain action
+[source,console]
+----
+# ufw default [allow/deny/reject] [incoming/outgoing/routed]
+----
+
+.Drop all by default (except necessary ports)
+[source,console]
+----
+# ufw allow 22/tcp
+# ufw allow in on lo
+# ufw default deny incoming
+----
+
+.Create rule with direction, protocol, source/destination, and port
+[source,console]
+----
+# ufw [allow/deny/reject] [in/out] [proto tcp/udp] [from address] [to address] port [port]
+----
+
+.Essential rule: UFW automatically handles ESTABLISHED,RELATED traffic once enabled.
+[source,console]
+----
+# ufw allow eth0
+----
+
+.Append rule to the end of existing rule list
+[source,console]
+----
+# ufw allow [rule]
+----
+
+.Insert rule at top of rule list
+[source,console]
+----
+# ufw insert 1 [rule]
+----
+
+.Insert rule at specific line number
+[source,console]
+----
+# ufw insert [number] [rule]
+----
+
+.Delete rule by line number
+[source,console]
+----
+# ufw delete [number]
+----
+
+.Silently discard all packets from specific source without sending response
+[source,console]
+----
+# ufw deny from [IP/Subnet]
+----
+
+.Block all traffic from specific source IP
+[source,console]
+----
+# ufw deny from [IP]
+----
+
+.Allow all traffic though specific interface
+[source,console]
+----
+# ufw allow in on [interface]
+----
+
+<<<
+
+=== nftable
+
+.Generate text list of all tables
+[source,console]
+----
+# nft list ruleset
+----
+
+.List default table in numeric format and verbose
+[source,console]
+----
+# nft list ruleset -n
+----
+
+.List specifc table in numeric format and verbose
+[source,console]
+----
+# nft list table [family] [table]
+----
+
+.List all rules with handles
+[source,console]
+----
+# nft list table [family] [table] -n -a
+----
+
+.Set default chain action
+[source,console]
+----
+# nft add chain [family] [table] [chain] { type filter hook [hook] priority 0 ; policy [drop/accept] ; }
+----
+
+.Drop all by default (except necessary ports)
+====
+[source,console]
+----
+# nft add rule [family] [table] INPUT tcp dport 22 accept
+# nft add rule [family] [table] INPUT iif lo accept 
+# nft add chain [family] [table] INPUT { policy drop ; }
+----
+====
+
+.Create rule to chain with protocol, destination port, source port, accept or reject
+[source,console]
+----
+# nft add rule [family] [table] [chain] [ip/ip6] [protocol] [dport/sport] [port] [accept/reject/drop]
+----
+
+.Allow return traffic for connections host initiated
+[source,console]
+----
+# nft add rule [family] [table] [chain] ct state established,related accept
+# nft add rule inet filter input ct state established,related accept
+# nft add rule inet filter output ct state established,related accept
+----
+
+.Append rule to end of specific chain
+[source,console]
+----
+# nft add rule [family] [table] [chain] [rule]
+----
+
+.Insert rule at the top of specific chain
+[source,console]
+----
+# nft insert rule [family] [table] [chain] [rule]
+----
+
+.Insert rules at specific index
+[source,console]
+----
+# nft insert rule [family] [table] [chain] index [number] [rule]
+----
+
+.Replace an existing rule at specific handle with new definition
+[source,console]
+----
+# nft replace rule [family] [table] [chain] handle [number] [new_rule]
+----
+
+.Delete rule by specific handle number
+[source,console]
+----
+# nft delete rule [family] [table] [chain] handle [number]
+----
+
+.Silently discard all packets from specific source without sending response
+[source,console]
+----
+# nft add rule [family] [table] INPUT saddr [IP/subnet] drop
+----
+
+.Block all traffic from specific source IP
+[source,console]
+----
+# nft add rule [family] [table] INPUT saddr [IP_ADDRESS] drop
+----
+
+.Allow all traffic though specific interface
+[source,console]
+----
+# nft add rule [family] [table] INPUT iifname "[interface]" accept
+----
+
+.Flush all rules in current table (clear config)
+[source,console]
+----
+# nft flush ruleset
+----
+
+.Save current runtime rules to configuration file
+[source,console]
+----
+# nft list ruleset > /etc/nftables.conf
+----
+
+.Load saved rules into kernel
+[source,console]
+----
+# systemctl start nftables
+----
+
+.Ensure service starts automaticall at boot
+[source,console]
+----
+# systemctl enable nftables
+----
+
+<<<
+
+=== firewalld
+
+.Generate text list of all tables
+[source,console]
+----
+# firewall-cmd --list-all-zones
+----
+
+.List default zone in human readable format
+[source,console]
+----
+# firewall-cmd --list-all
+
+----
+
+.List specifc zone configuration
+[source,console]
+----
+# firewall-cmd --zone=[zone] --list-all
+----
+
+.List all currently active zones and the interfaces assigned to them
+[source,console]
+----
+# firewall-cmd --get-active-zones
+----
+
+.Set default zone
+[source,console]
+----
+# firewall-cmd --set-default-zone=[zone]
+----
+
+.Allow incoming on specific port/service
+====
+[source,console]
+----
+# firewall-cmd --permanent --add-port=22/tcp
+# firewall-cmd --permanent --add-service=ssh
+# firewall-cmd --reload
+----
+====
+
+.Create rule for specific zone with protocol and port
+[source,console]
+----
+# firewall-cmd --zone=[zone] --add-port=[port]/[tcp/udp]
+----
+
+.Append rule to runtime configuration (immediate but temporary)
+[source,console]
+----
+# firewall-cmd --add-[service/port]
+----
+
+.Add rule to the permanent configuration (requires reload to take effect)
+[source,console]
+----
+# firewall-cmd --permanent --add-[service/port]
+----
+
+.Insert rule at specific priority using the direct interface
+[source,console]
+----
+# firewall-cmd --direct --add-rule ipv4 filter INPUT 0 [rule]
+----
+
+.Replace/Modify is usually done by removing the old entry and adding the new one
+[source,console]
+----
+# firewall-cmd --permanent --zone=[zone] --remove-service=[service]
+----
+
+.Delete specific rule by removing its definition
+[source,console]
+----
+# firewall-cmd --permanent --remove-port=[port]/tcp
+----
+
+.Silently discard all packets from specific source without sending response using rich rule
+[source,console]
+----
+# firewall-cmd --permanent --add-rich-rule='rule family="ipv4" source address="[IP/subnet]" drop'
+----
+
+.Block all traffic from specific source IP using a rich rule
+[source,console]
+----
+# firewall-cmd --permanent --add-rich-rule='rule family="ipv4" source address="[IP_ADDRESS]" reject'
+----
+
+.Assign a specific hardware interface to a zone to control its traffic
+[source,console]
+----
+# firewall-cmd --zone=[zone] --add-interface=[interface]
+----
+
+.Common NAT rule to allow internal traffic to share external IP
+[source,console]
+----
+# firewall-cmd --permanent --zone=public --add-masquerade
+----
+
+."Flush" alternative: Panic mode cuts all incoming/outgoing packets. Use reload to reset to defaults
+[source,console]
+----
+# firewall-cmd --panic-on / firewall-cmd --panic-off
+----
+
+.Start firewalld service
+[source,console]
+----
+# systemctl start firewalld
+----
+
+.Save current runtime rules to permanent storage
+[source,console]
+----
+# firewall-cmd --runtime-to-permanent
+----
+
+.Load saved permanent rules into active runtime
+[source,console]
+----
+# firewall-cmd --reload
+----
+
+.Ensure service starts automaticall at boot
+[source,console]
+----
+# systemctl enable firewalld
+----

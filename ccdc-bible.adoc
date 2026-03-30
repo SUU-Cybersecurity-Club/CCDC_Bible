@@ -1,0 +1,38 @@
+= CCDC Bible
+Competition Team <cybersec_assoc@suu.edu>; Arthur Taft <arthurtaft656@gmail.com>
+v2.0, 3-28-2026
+:description: Master document for all things CCDC
+:url-repo: https://github.com/SUU-Cybersecurity-Club/CCDC_Bible
+:experimental:
+:source-highlighter: rouge
+:suricata-win: C:\Program Files\Suricata
+:includedir: include/
+:imagedir: media/
+:doctype: article
+:title-page:
+:title-logo-image: image::{imagedir}write-that-down.png["SpongeBob 'Write That Down' meme",align=center]
+:icons: font
+:toc: macro
+:toclevels: 3
+
+<<<
+toc::[]
+
+<<<
+== First 30
+include::{includedir}linux-first-30.adoc[]
+
+<<<
+include::{includedir}windows-first-30.adoc[]
+
+<<<
+include::{includedir}firewall-first-30.adoc[]
+
+<<<
+include::{includedir}linux-addendum.adoc[]
+
+<<<
+include::{includedir}windows-addendum.adoc[]
+
+<<<
+include::{includedir}firewall-addendum.adoc[]

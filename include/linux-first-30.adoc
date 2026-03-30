@@ -1,0 +1,205 @@
+=== Linux
+
+==== Linux Default Password Change
+
+[source,console]
+----
+# passwd <.>
+----
+<.> Change the password of current user
+
+[source,console]
+----
+# passwd [username] <.>
+----
+<.> Change password for other user
+
+<<<
+
+==== Backup user
+
+.Debian/Ubuntu
+[source,console]
+----
+# adduser [username] <.>
+----
+<.> Creates a new user
+
+.Arch/Red Hat/Fedora/CentOS/Oracle
+[source,console]
+----
+# useradd -m [username] <.>
+# passwd [username] <.>
+----
+<.> Creates a new user
+<.> Sets new user's password
+
+.TIP
+TIP: The `adduser` command will allow you to set a password, whereas `useradd` will not. Make sure to set the password manually when using `useradd`!
+
+.Debian/Ubuntu
+[source,console]
+----
+# usermod -aG sudo [username] <.>
+----
+<.> This adds [username] to sudo group
+
+.Arch/Red Hat/Fedora/CentOS/Oracle
+[source,console]
+----
+# usermod -aG wheel [username] <.>
+----
+<.> This adds [username] to wheel group
+
+.IMPORTANT
+IMPORTANT: `sudo` and `wheel` are different groups, and not every distro has a sudo group. If in doubt, add the user to the `wheel` group
+
+<<<
+
+==== Backup Services
+
+[source,console]
+----
+# mkdir [backup location] <.>
+# cd /
+# tar -cpf [backup-name.tar] [thing-to-back-up] <.>
+# cp [backup-name.tar] [backup-location] <.>
+----
+<.> Create backup backup location
+<.> Create tarball archive of file/directory to be backed up
+<.> Copy backup to a differnt location
+
+.CAUTION
+CAUTION: The `-p` tag in the `tar` command specifies for file permissions to be retained. Not setting this flag can break functionality if services need to be restored
+
+Common backup locations
+[source,console]
+----
+/etc
+/usr/bin
+/usr/sbin
+/opt <.>
+/srv <.>
+----
+<.> If `splunk` is present, refer to addendum
+<.> If not empty
+
+<<<
+
+==== Linux Discovery
+
+.NOTE
+NOTE: `su root` and `less`/`cat` each file
+
+===== Network (IPs)
+
+[source,console]
+----
+# ip a > ips <.>
+# ip r > route <.>
+----
+<.> Save all IP and MAC addresses to file
+<.> Save default routes and gateway to file
+
+===== Services/Ports
+
+[source,console]
+----
+# ss -autpn > ports <.>
+----
+<.> Save open ports and service name to file
+
+===== Nmap
+
+[source,console]
+----
+# nmap -sV -T4 -p- localhost > nmap <.>
+----
+<.> Run nmap scan checking for service versions, running a fast scan, only against local ports
+
+.NOTE
+NOTE: Take note of any concerning ports to follow up on
+
+===== Users
+
+[source,console]
+----
+# getent group > groups <.>
+----
+<.> Save users and groups to file
+
+.NOTE
+NOTE: Take note of users that are members of the `sudo`/`wheel` group
+
+===== Firewall
+
+[source,console]
+----
+# firewall-cmd --list-all-zones > firewall <.>
+# iptables-save > firewall <.>
+----
+<.> Saves all `firewall-cmd` rules to file
+<.> Saves all `iptables` rules to file
+
+.NOTE
+NOTE: Take note of any suspicious/weird rules
+
+===== Process Check
+
+.WARNING
+WARNING: Check for revshells
+
+[source,console]
+----
+# ps -eaf --forest > pss  <.>
+# cat /etc/profile <.>
+# ls /etc/profile.d/ <.>
+# cat ~/.bashrc <.>
+# ls ~/.bashrc.d/ <.>
+# cat ~/.bash_profile <.>
+----
+<.> Save currently running processes in forest view to file
+<.> Show base profile that loads environment when new shell session is started
+<.> List any files to be loaded with shell profile
+<.> Show user specific shell modifications and settings
+<.> List any files to be loaded with user shell settings
+<.> Show user specific shell profile (typically chain loads after main profile)
+
+.NOTE
+NOTE: Take note of any suspicious entries and verify
+
+===== Cron Check
+
+.WARNING
+WARNING: Check for revshells
+
+[source,console]
+----
+# crontab -l <.>
+# crontab -l -u [user] <.>
+# cat /etc/crontab <.>
+----
+<.> List crontabs for root user
+<.> List crontabs for [user]
+<.> Check system level crontab
+
+.NOTE
+NOTE: Take note of any entries that should be checked
+
+===== Binary Package Check
+
+.Debian/Ubuntu
+[source,console]
+----
+# apt update && apt install -y debsums <.>
+# (debsums -s > debsums_results.txt 2>&1) & <.>
+----
+<.> Install `debsums` package
+<.> Run `debsums` in subshell, saving output to file, redirecting STDERR to STDOUT, as a background process
+
+.Red Hat/Fedora/CentOS/Oracle
+[source,console]
+----
+# rpm -Va > rpm_results.txt 2>&1 & <.>
+----
+<.> Verify all `rpm` packages, saving output to file, redirecting STDERR to STDOUT, as a background process

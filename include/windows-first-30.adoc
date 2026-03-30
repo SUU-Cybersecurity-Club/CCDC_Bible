@@ -1,0 +1,108 @@
+=== Windows
+
+==== Attempt to run Hayden's script
+
+.NOTE
+NOTE: Hayden's script needs internet access
+
+Run the following command to run script
+
+[source,powershell]
+----
+> [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; <.>
+> Invoke-WebRequest https://github.com/SUU-Cybersecurity-Club/CCDC-Scripts/releases/latest/download/windows-hardening.zip -Outfile windows-hardening.zip; <.>
+> Expand-Archive -Path windows-hardening.zip -DestinationPath windows-hardening; <.>
+> cd windows-hardening/windows-hardening; <.>
+> .\start.bat; <.>
+----
+<.> Set TLS to TLSv1.2
+<.> Download script from GitHub
+<.> Unzip script archive
+<.> Change directories to script root
+<.> Run script
+
+.CAUTION
+CAUTION: Check for errors. Especailly Windows Defender (AV)
+
+.NOTE
+NOTE: There are a lot of issues that can crop up when running Hayden’s script: please refer to the section in the addendum about common issues. If it still does not work after trying to fix it for 15 minutes or so, please refer to the other parts of the addendum to perform its process manually.
+
+.WARNING
+WARNING: ONLY RUN THE FOLLOWING IF HAYDEN'S SCRIPT FAILS
+
+.CAUTION
+CAUTION: Run the following in powershell ISE on desktop servers. If on a core machine (CMD) run them one at a time from a powershell prompt (to do so, type in powershell in the cmd to start a powershell terminal).
+
+<<<
+
+==== Default Password Change
+
+Change local *user* password
+
+[source,powershell]
+----
+> $Password = Read-Host "Please enter password" -AsSecureString
+> Set-LocalUser -Name "[user]" -Password $Password
+----
+
+Change local *admin* password
+[source,powershell]
+----
+> $Password = Read-Host "Please enter password" -AsSecureString
+> Set-LocalUser -Name "Administrator" -Password $Password
+----
+
+Change *Active Directory (AD) user* password
+[source,powershell]
+----
+> Set-ADAccountPassword -Identity [user] -Reset -NewPassword
+> (Read-Host -AsSecureString "Please enter password")
+----
+
+.NOTE
+NOTE: The `+\`+` is the Windows equivalent of the Unix `+\+` to continue commands on a new line
+
+Change *Active Directory (AD) admin* password
+[source,powershell]
+----
+> Set-ADAccountPassword -Identity Administrator -Reset -NewPassword ` <.>
+> (Read-Host -AsSecureString "Please enter password")
+----
+
+<<<
+
+==== Backup User
+
+Create *Active Directory (AD) admin*
+[source,powershell]
+----
+> $Password = Read-Host "Enter password for new AD admin account" -AsSecureString
+> New-ADUser`
+     -Name "printer"`
+     -SamAccountName "printer"`
+     -UserPrincipalName "printer@[domain-name]"`
+     -AccountPassword $Password`
+     -Enabled $true`
+     -Path "OU=Admins,DC=domain,DC=local"
+> Add-ADGroupMember -Identity "Domain Admins" -Members "printer"
+----
+
+Create *local admin*
+[source,powershell]
+----
+> $Password = Read-Host "Enter password for local admin" -AsSecureString
+> New-LocalUser`
+     -Name "printer"`
+     -Password $Password`
+     -FullName "printer"`
+     -Description "Extra Admin Account"
+> Add-LocalGroupMember`
+     -Group "Administrators"`
+     -Member "printer"
+----
+
+<<<
+
+==== Backup Services
+
+Because Windows is the way that it is, there is no singular location to back things up. Go hunting and back up necessary services as you need.

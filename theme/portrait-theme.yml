@@ -1,0 +1,25 @@
+extends: default
+title-page:
+  text-align: center
+  title: 
+    top: 15%
+  logo:
+    top: 35%
+admonition:
+  column_widths: [1.25in, null]
+  icon:
+    tip:
+      size: 18
+      stroke_color: #333333
+    note:
+      size: 18
+    important:
+      size: 18
+    caution:
+      size: 18
+    warning:
+      size: 18
+  label:
+    text_transform: uppercase
+    font_style: bold
+    font_color: $base_font_color

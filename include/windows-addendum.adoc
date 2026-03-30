@@ -1,0 +1,687 @@
+== Windows Addendum
+
+=== Hayden's Script Common Issues
+
+* URL did not find the script
+
+** If this is the case, you may be running the wrong command to download and execute it. Please run the command listed in this document at the top, and this URL should be active. If not, then you will need to do Hayden’s script steps manually. To do so, please see the steps to Hayden’s script section.
+
+* You see transcript errors
+
+** These won't stop the script, they are simply there to help log the script actions
+
+<<<
+
+=== Defender/Anti Virus Errors
+
+image::{imagedir}windows/defender-error.png["Console showing Defender Errors"]
+
+.TIP
+TIP: This can be fixed by installing Defender
+
+<<<
+
+=== Defender Install
+
+[source,powershell]
+----
+> Install-WindowsFeature Windows-Defender
+> shutdown /r /t 0
+----
+
+[NOTE]
+.NOTE
+====
+If using Hayden's script re-run the following after restarting
+[source,powershell]
+----
+> .\start.bat
+----
+You will need to enter passwords in again
+====
+
+==== AV Commands from Script
+
+[source,powershell]
+----
+> Get-MpComputerStatus <.>
+----
+<.> Get status of Defender systems on machine
+
+[NOTE]
+.NOTE
+====
+You can use the following commands if you don't want to re-run `start.bat`
+
+[source,powershell]
+----
+> Update-MpSignature
+> Set-MpPreference -MAPSReporting Advanced
+> Set-MpPreference -SubmitSamplesConsent Always
+> Set-MpPreference -DisableBlockAtFirstSeen 0
+> Set-MpPreference -DisableIOAVProtection 0
+> Set-MpPreference -DisableRealtimeMonitoring 0
+> Set-MpPreference -DisableBehaviorMonitoring 0
+> Set-MpPreference -DisableScriptScanning 0
+> Set-MpPreference -DisableRemovableDriveScanning 0
+> Set-MpPreference -PUAProtection Enabled
+> Set-MpPreference -DisableArchiveScanning 0
+> Set-MpPreference -DisableEmailScanning 0
+> Set-MpPreference -CheckForSignaturesBeforeRunningScan 1
+----
+====
+
+<<<
+
+=== Hayden's Debugging Links
+
+https://github.com/SUU-Cybersecurity-Club/CCDC-Scripts/blob/main/windows-hardening
+
+https://github.com/SUU-Cybersecurity-Club/CCDC-Scripts/releases/latest/download/windows-hardening.zip
+
+https://github.com/SUU-Cybersecurity-Club/CCDC_Bible/blob/main/ccdc-bible.md
+
+<<<
+
+=== Anonymous Login Group
+
+image::{imagedir}windows/anonymous-login.png["Regedit screen showing registry entries to change"]
+
+Edit the following registry keys to disable anonymous login
+
+:!example-caption:
+
+====
+menu:Computer[HKEY_LOCAL_MACHINE > SYSTEM > CurrentControlSet > Control > Lsa]
+
+[source,config]
+----
+RestrictAnonymous=1
+RestrictAnonymousSAM=1
+EveryoneIncludesAnonymous=0
+----
+====
+
+:example-caption:
+
+.TIP
+TIP: If the group policy does not work, you can edit these registry keys on the individual machine to fix anonymous logon
+
+<<<
+
+=== Backup Files and Folders
+
+[source,powershell]
+----
+> Compress-Archive -Path "[absolute path to file]" -DestinationPath "[absolute output path].zip" <.>
+> Compress-Archive -Path "[absolute path to directory]" -DestinationPath "[absolute output path].zip" <.>
+----
+<.> Single File Backup
+<.> Directory Backup
+
+.Time Stamped Backup
+[source,powershell]
+----
+> $Date = Get-Date -Format "yyyy-MM-dd_HHmm"
+> Compress-Archive -Path "C:\Logs" -DestinationPath "C:\Backups\Logs_$Date.zip"
+----
+
+.Backup List of Running Services
+[source,powershell]
+----
+> $BackupPath = "C:\Service_Backups"
+> New-Item -ItemType Directory -Path $BackupPath -Force
+> Get-CimInstance Win32_Service | Select-Object Name, DisplayName, State, StartMode, StartName, PathName | Export-Csv "$BackupPath\Services_Backup.csv" -NoTypeInformation
+----
+
+<<<
+
+=== DSRM Password
+
+.Set New DSRM Password
+[source,powershell]
+----
+> ntdsutil
+> set dsrm password
+> reset password on server null <.>
+> Quit
+> Quit
+----
+<.> A prompt to enter the new password should appear after running this command
+
+<<<
+
+=== GPO (`gpedit.msc`)
+
+:!example-caption:
+
+.Password Policy
+====
+menu:Comp Config[Windows > Security > Account > Password] 
+
+Minimum 12 Characters, Complexity Enabled, Max 60 Days
+====
+
+.Lockout Policy
+====
+menu:Comp Config[Windows > Security > Account > Account Lockout] 
+
+[source,config]
+----
+Threshold = 5
+Duration = 5
+----
+====
+
+.Login/Logoff Audit
+====
+menu:Comp Config[Wind Set > Sec Set > Adv Audit Policy > Audit Pol > Acc Logon]
+
+Enable Success and Failure for Kerberos Authentication +
+Enable Success and Failure for Service Ticket Operations
+====
+
+.Login/Logoff
+====
+menu:Comp Config[Wind Set > Sec Set > Adv Audit Policy > Audit Pol > Acc Logon > Logon/Logoff]
+
+Enable Success and Failure for Audit Logon +
+Enable Success for Audit Special Logon
+====
+
+:example-caption:
+
+<<<
+
+=== IP and Gateway
+
+.Show IP, Gateway, and connected Domain
+[source,powershell]
+----
+> ipconfig /all
+----
+
+<<<
+
+=== Kerberos Preauth
+
+image::{imagedir}windows/kerberos-preauth.png["Image of regedit showing kerberos preauth options"]
+
+<<<
+
+=== Login Banner
+
+.Powershell
+[source,powershell]
+----
+> Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" -Name "legalnoticecaption" -Value $title
+> Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" -Name "legalnoticetext" -Value $message
+----
+
+image::{imagedir}windows/login-banner-regedit.png["Image showing registry options to enable a login banner"]
+
+:!example-caption:
+
+.RegEdit
+====
+menu:Computer[HKEY_LOCAL_MACHINE > SOFTWARE > Microsoft > Windows > CurrentVersion > Policies > System] 
+
+[source,config]
+----
+legalnoticecaption: $title
+legalnoticetext: $message
+----
+====
+
+:example-caption:
+
+<<<
+
+=== Nmap
+
+.Windows Native way to find what Nmap finds
+[source,powershell]
+----
+> Get-NetTCPConnection
+----
+
+.Server 2022 and Later
+[source,powershell]
+----
+> winget install -id Insecure.Nmap -e
+----
+
+.NOTE
+NOTE: `Nmap` is not supported on Server 2019 and earlier. Refer to the Powershell native command above
+
+<<<
+
+=== SMB
+
+.Disable SMB
+[source,powershell]
+----
+> Set-SmbServerConfiguration -EnableSMB1Protocol $false -Force
+> Set-SmbServerConfiguration -EnableSMB2Protocol $false -Force
+----
+
+<<<
+
+=== Splunk Forwarder
+
+==== Install
+
+[source,powershell]
+----
+> curl [download link] -o splunk.ps1
+> .\splunk.ps1 -ip [server ip]
+> shutdown /r /t 0
+----
+
+.NOTE
+NOTE: Username is `splunk`, user password for `printer` user of host
+
+==== Usage
+
+[source,powershell]
+----
+> cd C:\Program Files\SplunkUniversalForwarder\bin
+> .\splunk add monitor "C:\[File to monitor]" -index main <.>
+----
+<.> Index options are: `main`, `web`, `windows`, `system`, `misc`
+
+<<<
+
+=== Suricata
+
+==== Install
+
+Download and install `Npcap` from https://npcap.com/[Npcap website^] 
+
+[CAUTION]
+.CAUTION
+====
+Check `WinPcap API-compatible mode` during install +
+Suricata needs `Npcap` to capture packets. It will not start without `WinPcap` mode
+====
+
+Download the `.msi` installer from https://suricata.io/download[Suricata Download^] 
+
+[source,powershell]
+----
+> .\suricata-[version].msi
+----
+
+Follow the installer menu:Next[Next] 
+
+===== Interface
+
+[source,powershell]
+----
+> ipconfig /all
+----
+
+.NOTE
+NOTE: Take note of the full name of the network adapter, this will be the interface that Suricata monitors
+
+Edit `{suricata-win}\suricata.yaml`
+[source,yaml]
+----
+vars:
+  address-groups:
+    HOME_NET:"[IP/CIDR]" <.>
+----
+<.> Change this to match the network
+
+Set the interface under the `pcap` section
+
+[source,yaml]
+----
+pcap:
+  - interface: [ifname] <.>
+----
+<.> Use the interface name from `ipconfig /all`
+
+.NOTE
+NOTE: Windows uses `pcap`, not `af-packet`
+
+===== Rules
+
+.Automatic Rules Download (Administrator CMD)
+[source,powershell,subs="attributes+"]
+----
+> cd "{suricata-win}"
+> suricata-update
+----
+
+To download rules manually go to https://rules.emergingthreats.net/open/suricata-+[version-num]+/emerging.rules.tar.gz
+
+Extract and copy the `.rules` files into `{suricata-win}\rules\`
+
+===== Usage
+
+.NOTE
+NOTE: All commands should be run in an Administrator CMD prompt
+
+.Test config for errors without starting
+[source,powershell,subs="attributes+"]
+----
+> cd "{suricata-win}"
+> suricata.exe -T -c suricata.yaml
+----
+
+.Start Suricata on interface
+[source,powershell,subs="attributes+"]
+----
+> cd "{suricata-win}"
+> suricata.exe -c suricata.yaml -i "[ifname]" <.>
+----
+<.> Enter your interface name here
+
+.WARNING
+WARNING: Do not close this window! Suricata runs in the foreground
+
+.Running as a service (if supported)
+[source,powershell,subs="attributes+"]
+----
+> sc create Suricata binPath=""{suricata-win}\suricata.exe" -c "{suricata-win}\suricata.yaml" -i "[ifname]" --service" start=auto
+> net start Suricata
+----
+
+.NOTE
+NOTE: Not all versions support `--service`
+
+===== Log Files
+
+.Quick one-line alert log, easiest to read
+`{suricata-win}\log\fast.log`
+
+.Full JSON log with all detail (`alerts`, `dns`, `http`, `tls`, `flow`)
+`{suricata-win}\log\eve.json`
+
+.Performance and packet stats
+`{suricata-win}\log\stats.log`
+
+.Suricata's own startup and error log. Check here first if something is wrong
+`{suricata-win}\log\suricata.log`
+
+===== Reading Logs (CMD)
+
+.Print All Alerts
+[source,powershell,subs="attributes+"]
+----
+> type "{suricata-win}\log\fast.log"
+----
+
+.Search for Malware Signature Hits
+[source,powershell,subs="attributes+"]
+----
+> type "{suricata-win}\log\fast.log" | find "ET MALWARE"
+----
+
+.Search for Trojan Signature Hits
+[source,powershell,subs="attributes+"]
+----
+> type "{suricata-win}\log\fast.log" | find "ET TROJAN"
+----
+
+.Search for Scan/Recon Activity
+[source,powershell,subs="attributes+"]
+----
+> type "{suricata-win}\log\fast.log" | find "ET SCAN"
+----
+
+.Search for Specific IP in Alerts
+[source,powershell,subs="attributes+"]
+----
+> type "{suricata-win}\log\fast.log" | find "ET [IP]"
+----
+
+===== Reading Logs (Powershell)
+
+.Show Last 20 Alerts
+[source,powershell,subs="attributes+"]
+----
+> Get-Content "{suricata-win}\log\fast.log" -Tail 20
+----
+
+.Watch Alerts in Real-Time (like `tail -f` on Linux)
+[source,powershell,subs="attributes+"]
+----
+> Get-Content "{suricata-win}\log\fast.log" -Wait
+----
+
+.Search for Malware Hits
+[source,powershell,subs="attributes+"]
+----
+> Get-Content "{suricata-win}\log\fast.log" | Select-String "MALWARE"
+----
+
+.Watch Alerts from `eve.json` in Real-Time
+[source,powershell,subs="attributes+"]
+----
+> Get-Content "{suricata-win}\log\eve.json" -Wait | ConvertFrom-Json | Where-Object { $_.event_type -eq "alert" }
+----
+
+.Top 20 Most Queried DNS Domains. Good for Finding Beacons
+[source,powershell,subs="attributes+"]
+----
+> Get-Content "{suricata-win}\log\eve.json" | ConvertFrom-Json | Where-Object { $_.event_type -eq "dns" } | Select-Object -ExpandProperty dns | Group-Object rrname | Sort-Object Count -Descending | Select-Object -First 20
+----
+
+.Clean Alert Summary with IPs, Ports, and Signature Name
+[source,powershell,subs="attributes+"]
+----
+> Get-Content "{suricata-win}\log\eve.json" | ConvertFrom-Json | Where-Object { _.event_type -eq "alert" } | Select-Object timestamp, src_ip, dest_ip, dest_port, @{N='signature';E={_.alert.signature}}
+----
+
+.This is Something
+[source,powershell,subs="attributes+"]
+----
+> Get-Content "{suricata-win}\log\eve.json" | ConvertFrom-Json | Where-Object { _.event_type -eq "tls" } | Select-Object src_ip, dest_ip, @{N='sni';E={_.tls.sni}}
+----
+
+<<<
+
+=== Sysmom Script
+
+This script checks all the network connections that sysmon logs and collects only SSH connections. It then stores those in a file named sysmon-ssh-logs.txt. To adjust it, change the port number to any port you want to, and it can show any logs it has on that port. See part 2 to understand how to log more than only one port at a time.
+
+==== Part 1
+
+[source,powershell]
+----
+# Output file path
+$OutputFile = "C:\sysmon-ssh-logs.txt"
+
+# Get Sysmon Event ID 3 events
+$Events = Get-WinEvent -FilterHashtable @{
+    LogName = "Microsoft-Windows-Sysmon/Operational"
+        Id      = 3
+} -ErrorAction SilentlyContinue
+
+# Filter for SSH (Destination Port 22)
+$SSHEvents = $Events | Where-Object {
+    $_.Message -match "DestinationPort:\s+22"
+}
+
+# Write results
+$SSHEvents | Select-Object TimeCreated, Id, Message |
+Format-List | Out-File -FilePath $OutputFile -Encoding UTF8
+
+Write-Output "SSH connection logs written to $OutputFile"
+----
+
+==== Part 2
+
+Doing more uses an “or” flag to detect two options. This can be done both with purely ports or any part of the message of the log. The following script checks for both ssh and udp ports:
+The script after it also checks for ssh and udp, but does so differently:
+
+[source,powershell]
+----
+# Output file path
+$OutputFile = "C:\sysmon-network-logs.txt"
+
+# Get Sysmon Event ID 3 events
+$Events = Get-WinEvent -FilterHashtable @{
+    LogName = "Microsoft-Windows-Sysmon/Operational"
+        Id      = 3
+} -ErrorAction SilentlyContinue
+
+# Filter for SSH (Port 22) OR UDP protocol
+$FilteredEvents = $Events | Where-Object {
+    $_.Message -match "DestinationPort:\s+22" -or
+        $_.Message -match "DestinationPort:\s+53"
+}
+
+# Write results
+$FilteredEvents | Select-Object TimeCreated, Id, Message |
+Format-List | Out-File -FilePath $OutputFile -Encoding UTF8
+
+Write-Output "SSH and UDP connection logs written to $OutputFile"
+----
+
+[source,powershell]
+----
+# Output file path
+$OutputFile = "C:\sysmon-network-logs.txt"
+
+# Get Sysmon Event ID 3 events
+$Events = Get-WinEvent -FilterHashtable @{
+    LogName = "Microsoft-Windows-Sysmon/Operational"
+        Id      = 3
+} -ErrorAction SilentlyContinue
+
+# Filter for SSH (Port 22) OR UDP protocol
+$FilteredEvents = $Events | Where-Object {
+    $_.Message -match "DestinationPort:\s+22" -or
+        $_.Message -match "Protocol:\s+udp"
+}
+
+# Write results
+$FilteredEvents | Select-Object TimeCreated, Id, Message |
+Format-List | Out-File -FilePath $OutputFile -Encoding UTF8
+
+Write-Output "SSH and UDP connection logs written to $OutputFile"
+----
+
+<<<
+
+=== Users
+
+.Show every user with Admin privileges
+[source,powershell]
+----
+> net localgroup administrators
+----
+
+.Show all local users
+[source,powershell]
+----
+> net localgroup users
+----
+
+.NOTE
+NOTE: The following commands must be run on the Domain Controller
+
+.Show all domain admins
+[source,powershell]
+----
+> Get-ADGroupMember "Domain Admins" -Recursive | Select Name, SamAccountName, ObjectClass
+----
+
+.Show all enterprise admins
+[source,powershell]
+----
+> Get-ADGroupMember "Enterprise Admins" -Recursive | Select Name, SamAccountName, ObjectClass
+----
+
+<<<
+
+=== Windows Firewall
+
+.Turn on Firewall
+[source,powershell]
+----
+> Set-NetFirewallProfile Domain,Public,Private -Enabled True
+----
+
+<<<
+
+=== Windows Update Registry Repair
+
+[source,powershell]
+----
+> sc.exe create wuauserv binPath= "C:\Windows\System32\svchost.exe -k netsvcs -p"
+> sc.exe config wuauserv type= share
+> sc.exe config wuauserv start= delayed-auto
+> sc.exe config wuauserv DisplayName= "Windows Update"
+
+> reg add "HKLM\OFFLINE\ControlSet001\Services\wuauserv" /v ImagePath /t REG_EXPAND_SZ /d "%systemroot%\system32\svchost.exe -k netsvcs -p" /f
+> reg add "HKLM\OFFLINE\ControlSet001\Services\wuauserv" /v Start /t REG_DWORD /d 3 /f
+> reg add "HKLM\OFFLINE\ControlSet001\Services\wuauserv" /v Type /t REG_DWORD /d 32 /f
+> reg add "HKLM\OFFLINE\ControlSet001\Services\wuauserv" /v ObjectName /t REG_SZ /d "LocalSystem" /f
+> reg add "HKLM\OFFLINE\ControlSet001\Services\wuauserv" /v DisplayName /t REG_SZ /d "Windows Update" /f
+> reg add "HKLM\OFFLINE\ControlSet001\Services\wuauserv\Parameters" /v ServiceDll /t REG_EXPAND_SZ /d "%systemroot%\system32\wuaueng.dll" /f
+> reg add "HKLM\OFFLINE\ControlSet001\Services\wuauserv\Parameters" /v ServiceDllUnloadOnStop /t REG_DWORD /d 1 /f
+> reg add "HKLM\OFFLINE\ControlSet001\Services\wuauserv\Parameters" /v ServiceMain /t REG_SZ /d "WUServiceMain" /f
+----
+
+Then restart
+
+[source,powershell]
+----
+> shutdown /r /t 0
+----
+
+[source,powershell]
+----
+> sc.exe create WinDefend binPath= "\"C:\Program Files\Windows Defender\MsMpEng.exe\""
+> sc.exe config WinDefend type= own
+> sc.exe config WinDefend start= auto
+> sc.exe config WinDefend DisplayName= "Windows Defender Antivirus Service"
+> sc.exe config WinDefend depend= RpcSs
+> reg add "HKLM\SYSTEM\CurrentControlSet\Services\WinDefend" /v ImagePath /t REG_EXPAND_SZ /d "\"%ProgramFiles%\Windows Defender\MsMpEng.exe\"" /f
+> reg add "HKLM\SYSTEM\CurrentControlSet\Services\WinDefend" /v Start /t REG_DWORD /d 2 /f
+> reg add "HKLM\SYSTEM\CurrentControlSet\Services\WinDefend" /v Type /t REG_DWORD /d 16 /f
+> reg add "HKLM\SYSTEM\CurrentControlSet\Services\WinDefend" /v ObjectName /t REG_SZ /d "LocalSystem" /f
+> reg add "HKLM\SYSTEM\CurrentControlSet\Services\WinDefend" /v DisplayName /t REG_SZ /d "Windows Defender Antivirus Service" /f
+> reg add "HKLM\SYSTEM\CurrentControlSet\Services\WinDefend" /v ErrorControl /t REG_DWORD /d 1 /f
+> reg add "HKLM\SYSTEM\CurrentControlSet\Services\WinDefend" /v DependOnService /t REG_MULTI_SZ /d "RpcSs" /f
+----
+
+Or if offline
+
+[source,powershell]
+----
+> reg load HKLM\OFFLINE D:\Windows\System32\config\SYSTEM
+----
+
+[source,powershell]
+----
+> reg add "HKLM\OFFLINE\ControlSet001\Services\WinDefend" /v ImagePath /t REG_EXPAND_SZ /d "\"%ProgramFiles%\Windows Defender\MsMpEng.exe\"" /f
+> reg add "HKLM\OFFLINE\ControlSet001\Services\WinDefend" /v Start /t REG_DWORD /d 2 /f
+> reg add "HKLM\OFFLINE\ControlSet001\Services\WinDefend" /v Type /t REG_DWORD /d 16 /f
+> reg add "HKLM\OFFLINE\ControlSet001\Services\WinDefend" /v ObjectName /t REG_SZ /d "LocalSystem" /f
+> reg add "HKLM\OFFLINE\ControlSet001\Services\WinDefend" /v DisplayName /t REG_SZ /d "Windows Defender Antivirus Service" /f
+> reg add "HKLM\OFFLINE\ControlSet001\Services\WinDefend" /v ErrorControl /t REG_DWORD /d 1 /f
+> reg add "HKLM\OFFLINE\ControlSet001\Services\WinDefend" /v DependOnService /t REG_MULTI_SZ /d "RpcSs" /f
+
+> reg unload HKLM\OFFLINE
+----
+
+<<<
+
+=== Wireshark
+
+.Get Interface Name
+[source,powershell]
+----
+> tshark -D
+----
+
+.Common Capture Command
+[source,powershell]
+----
+> tshark -i "[ifname]" -T fields -e frame.time -e ip.src -e ip.dst -e tcp.dstport -e dns.qry.name -e http.host -e tls.handshake.extensions_server_name -w capture.pcap
+----

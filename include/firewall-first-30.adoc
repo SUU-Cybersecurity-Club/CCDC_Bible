@@ -1,0 +1,105 @@
+=== Firewall
+
+==== Default Password Change
+
+===== Palo Alto
+
+:!example-caption:
+
+.Admin Password Change
+====
+menu:Device[Administrators > +[username]+ > Change Password Form > Commit] 
+====
+
+image::{imagedir}firewall/palo-admin-pass.png["Palo Change Admin Password"]
+
+.User Password Change
+====
+menu:Device[Local User Database > Users > +[username]+ > Edit User Form > Commit] 
+====
+
+image::{imagedir}firewall/palo-user-pass.png["Palo Change Admin Password"]
+
+===== Cisco
+
+.Admin/User Password Change
+====
+menu:Admin/Username[Menu Profile > Password] 
+====
+
+image::{imagedir}firewall/cisco-admin-pass.png["alt"]
+
+<<<
+
+==== Backup User
+
+.Backup User Creation (Palo)
+====
+menu:Device[Administrators > +[username]+ > Add > Commit] 
+====
+
+image::{imagedir}firewall/palo-backup-user.png["Palo Change Admin Password"]
+
+.NOTE
+NOTE: Must be logged in as an Administrator to add backup user
+
+<<<
+
+==== Remove Management Profiles
+
+<<<
+
+==== Backup Services
+
+===== Palo Alto
+
+.Save page
+====
+menu:Policies[Security > PDF/CSV Export] 
+====
+
+.Export Firewall Configs
+====
+menu:Device[Setup > Operations > Export Named Configuration Snapshot > `running-config.xml`] 
+====
+
+.Import/Restore Firewall Configs
+====
+menu:Device[Setup > Operations > Import Named Configuration Snapshot > +[config file]+ ] 
+====
+
+===== Cisco
+
+.Download Config in JSON Format
+====
+menu:Device[Device Administration > Download Configuration] 
+====
+
+.Create Backup
+====
+menu:Device[Backup and Restore > Configure] 
+====
+
+.Upload Backup File
+====
+menu:Device[Backup and Restore > Upload] 
+====
+
+==== Network Settings
+
+<<<
+
+===== Palo Alto
+
+.Configure DNS and NTP Servers
+====
+menu:Device[Setup > Services] 
+
+[source,config]
+----
+Update Server: updates.paloaltonetworks.com
+Primary NTP Server: 0.pool.ntp.org
+----
+====
+
+:example-caption:
